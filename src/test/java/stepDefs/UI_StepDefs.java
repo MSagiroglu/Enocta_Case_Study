@@ -82,14 +82,18 @@ public class UI_StepDefs {
                     try {
                         String text = product.getText().toLowerCase();
                         
-                        // Aksesuar kelimelerini kontrol et
+                        // Aksesuar kelimelerini kontrol et (kulaklık, mikrofon vb. eklendi)
                         boolean isAccessory = text.contains("kılıf") || text.contains("case") || 
                                               text.contains("koruyucu") || text.contains("şarj") || 
                                               text.contains("kablo") || text.contains("tutucu") || 
                                               text.contains("çanta") || text.contains("cüzdan") ||
                                               text.contains("kordon") || text.contains("lens") ||
                                               text.contains("kapak") || text.contains("cover") ||
-                                              text.contains("adaptör") || text.contains("teleskop");
+                                              text.contains("adaptör") || text.contains("teleskop") ||
+                                              text.contains("kulaklık") || text.contains("kulaklik") ||
+                                              text.contains("headset") || text.contains("earbud") ||
+                                              text.contains("mikrofon") || text.contains("hoparlör") ||
+                                              text.contains("watch") || text.contains("saat");
 
                         // Telefon marka/model kelimeleri (SADECE MARKALAR, 'telefon' kelimesi cok genel)
                         boolean isPhoneBrand = text.contains("iphone") || text.contains("samsung") || 

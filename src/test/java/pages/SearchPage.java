@@ -13,8 +13,8 @@ public class SearchPage extends BasePage {
     @FindBy(className = "a-button-input")
     public WebElement goButton;
 
-    // Use a robust selector for search results that excludes sponsored banners but includes products
-    @FindBy(css = "div[data-component-type='s-search-result']")
+    // Use a robust selector for search results that excludes sponsored carousels at the very bottom
+    @FindBy(css = "div.s-main-slot div[data-component-type='s-search-result']")
     public List<WebElement> productList;
     
     @FindBy(xpath = "//span[text()='Düşükten Yükseğe']")
