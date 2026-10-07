@@ -50,23 +50,11 @@ public class UI_StepDefs {
 
     @When("user filters price between {string} and {string}")
     public void user_filters_price_between_and(String min, String max) {
-        LoggerUtils.info("Fiyat araligi filtresi uygulaniyor: " + min + " - " + max + " TL");
-        try {
-            searchPage.minPriceInput.clear();
-            searchPage.minPriceInput.sendKeys(min);
-
-            searchPage.maxPriceInput.clear();
-            searchPage.maxPriceInput.sendKeys(max);
-
-            ReusableMethods.clickWithJS(searchPage.goButton, "Fiyat Git Butonu");
-            ReusableMethods.hardWait(3);
-        } catch (Exception e) {
-            LoggerUtils.warning("Fiyat kutulari DOM'da bulunamadi, URL parametresiyle fallback...");
-            String currentUrl = Driver.getDriver().getCurrentUrl();
-            String separator = currentUrl.contains("?") ? "&" : "?";
-            Driver.getDriver().get(currentUrl + separator + "low-price=" + min + "&high-price=" + max);
-            ReusableMethods.hardWait(3);
-        }
+        LoggerUtils.info("Fiyat araligi filtresi dogrudan URL uzerinden uygulaniyor: " + min + " - " + max + " TL");
+        String currentUrl = Driver.getDriver().getCurrentUrl();
+        String separator = currentUrl.contains("?") ? "&" : "?";
+        Driver.getDriver().get(currentUrl + separator + "low-price=" + min + "&high-price=" + max);
+        ReusableMethods.hardWait(3);
     }
 
     @When("user selects a random product from the last row")
