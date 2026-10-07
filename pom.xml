@@ -112,6 +112,18 @@
                             <checkBuildResult>false</checkBuildResult>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>report-all</id>
+                        <phase>verify</phase>
+                        <goals><goal>generate</goal></goals>
+                        <configuration>
+                            <projectName>ENOCTA CASE - TUM TESTLER (Toplu Rapor)</projectName>
+                            <outputDirectory>${project.build.directory}/cucumber-report-all</outputDirectory>
+                            <inputDirectory>${project.build.directory}</inputDirectory>
+                            <jsonFiles><param>**/cucumber-*.json</param></jsonFiles>
+                            <checkBuildResult>false</checkBuildResult>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
