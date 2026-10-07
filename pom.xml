@@ -80,6 +80,7 @@
                             <jsonFiles>
                                 <param>**/cucumber-*.json</param>
                             </jsonFiles>
+                            <checkBuildResult>false</checkBuildResult>
                         </configuration>
                     </execution>
                 </executions>

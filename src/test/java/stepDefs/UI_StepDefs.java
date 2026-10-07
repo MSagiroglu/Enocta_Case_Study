@@ -73,12 +73,12 @@ public class UI_StepDefs extends BaseStep {
 
     @When("user selects the lowest priced product")
     public void kullanici_en_dusuk_fiyatli_urunu_secer() {
-        info("Listelenen urunler arasindan en dusuk fiyatli gecerli cep telefonu seciliyor.");
+        info("Listelenen urunler arasindan sepete eklenebilir en dusuk fiyatli gecerli cep telefonu seciliyor.");
         try {
             waitForAllElements(searchPage.productList, "Urun Listesi");
             List<WebElement> products = searchPage.productList;
             
-            WebElement selectedProduct = null;
+            java.util.List<String> validUrls = new java.util.ArrayList<>();
             
             for (WebElement product : products) {
                 try {
@@ -93,31 +93,39 @@ public class UI_StepDefs extends BaseStep {
                                           text.contains("tutucu") || text.contains("kordon");
                                           
                     if (isPhoneBrand && !isAccessory) {
-                        selectedProduct = product;
-                        break;
+                        WebElement productLink = product.findElement(By.xpath(".//a[contains(@href, '/dp/')]"));
+                        validUrls.add(productLink.getAttribute("href"));
                     }
                 } catch (Exception ignored) {}
             }
             
-            if(selectedProduct == null && products.size() > 0) {
-                selectedProduct = products.get(0); // Fallback to first item if strict filter fails
+            Assert.assertTrue(validUrls.size() > 0, "Gecerli bir telefon bulunamadi!");
+            
+            boolean productSelected = false;
+            for (String url : validUrls) {
+                Driver.getDriver().get(url);
+                hardWait(2);
+                
+                // Sepete ekle butonu veya Diger saticilar butonu var mi kontrol et
+                boolean canBuy = Driver.getDriver().findElements(By.cssSelector("input#add-to-cart-button, input[name='submit.addToCart']")).size() > 0;
+                boolean hasOtherSellers = Driver.getDriver().findElements(By.xpath("//a[contains(@title, 'Daha Fazla')] | //a[contains(@title, 'Other Sellers')] | //a[contains(@href, 'offer-listing')]")).size() > 0;
+                
+                if (canBuy || hasOtherSellers) {
+                    productSelected = true;
+                    expectedTitle = getText(productPage.productTitle, "Urun Basligi").trim();
+                    if (productPage.productPrices.size() > 0) {
+                        expectedPrice = productPage.productPrices.get(0).getAttribute("textContent").trim().replaceAll("[^0-9,]", "");
+                    }
+                    break; // Satis yapilabilen urun bulundu, donguden cik!
+                } else {
+                    info("Secilen urun stokta yok veya varyant secimi istiyor. Bir sonraki en ucuz urune geciliyor...");
+                }
             }
-
-            Assert.assertNotNull(selectedProduct, "No products found to select");
             
-            WebElement productLink = selectedProduct.findElement(By.xpath(".//a[contains(@href, '/dp/')]"));
-            String url = productLink.getAttribute("href");
-            Driver.getDriver().get(url);
-            
-            // Save state for assertion
-            expectedTitle = getText(productPage.productTitle, "Urun Basligi").trim();
-            
-            if (productPage.productPrices.size() > 0) {
-                expectedPrice = productPage.productPrices.get(0).getAttribute("textContent").trim().replaceAll("[^0-9,]", "");
-            }
+            Assert.assertTrue(productSelected, "Sepete eklenebilir hicbir gecerli urun bulunamadi!");
             
         } catch (Exception e) {
-            Assert.fail("Failed to select product: " + e.getMessage());
+            Assert.fail("Urun secimi sirasinda hata: " + e.getMessage());
         }
     }
 
@@ -133,7 +141,6 @@ public class UI_StepDefs extends BaseStep {
             if(productPage.otherSellersList.size() > 0) {
                 WebElement firstOtherSellerAddBtn = productPage.otherSellersList.get(0).findElement(By.cssSelector("input[name='submit.addToCart']"));
                 clickWithJS(firstOtherSellerAddBtn, "Diger Satici Sepete Ekle Butonu");
-                return;
             } else {
                 throw new Exception("No other sellers in list");
             }
@@ -141,9 +148,18 @@ public class UI_StepDefs extends BaseStep {
              try {
                  clickWithJS(productPage.defaultAddToCartButton, "Varsayilan Sepete Ekle Butonu");
              } catch(Exception ex) {
-                 Assert.fail("No Add to Cart button found. Product might be out of stock.");
+                 Assert.fail("Sepete ekle butonu tiklanamadi.");
              }
         }
+        
+        // Amazon bazen sigorta/koruma paketi cikarir: "Hayir tesekkurler" butonuna tikla eger varsa
+        try {
+            hardWait(2);
+            WebElement noThanksBtn = Driver.getDriver().findElement(By.xpath("//input[@aria-labelledby='attachSiNoCoverage-announce'] | //button[contains(text(), 'Hayır')] | //input[contains(@aria-labelledby, 'NoCoverage')]"));
+            clickWithJS(noThanksBtn, "Koruma Paketi Iptal Butonu");
+        } catch(Exception ignored) {}
+
+        hardWait(2);
     }
 
     @Then("user verifies the selected product title and price match the cart")
