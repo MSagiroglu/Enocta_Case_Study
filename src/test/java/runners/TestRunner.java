@@ -9,9 +9,9 @@ import org.testng.annotations.Parameters;
 import utils.Driver;
 
 @CucumberOptions(
+    tags = "@all",
     features = "src/test/resources/features",
-    glue = {"stepDefs", "hooks"},
-    plugin = {"pretty", "html:target/cucumber-reports.html"}
+    glue = {"stepDefs", "hooks"}
 )
 public class TestRunner extends AbstractTestNGCucumberTests {
     
@@ -20,6 +20,9 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     public void setupBrowser(@Optional String browser) {
         if (browser != null) {
             Driver.setBrowser(browser);
+            System.setProperty("cucumber.plugin", "json:target/cucumber-" + browser + ".json, html:target/cucumber-" + browser + ".html");
+        } else {
+            System.setProperty("cucumber.plugin", "json:target/cucumber-default.json, html:target/cucumber-default.html");
         }
     }
     

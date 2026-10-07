@@ -1,4 +1,4 @@
-@api
+@all @api
 Feature: API Mock Server Tests
   
   Scenario: Test Token, View Invoice and Send Invoice

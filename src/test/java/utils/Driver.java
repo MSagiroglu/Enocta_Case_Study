@@ -16,6 +16,10 @@ public class Driver {
     public static void setBrowser(String browser) {
         browserName.set(browser);
     }
+    
+    public static String getBrowserName() {
+        return browserName.get();
+    }
 
     public static WebDriver getDriver() {
         if (driverPool.get() == null) {

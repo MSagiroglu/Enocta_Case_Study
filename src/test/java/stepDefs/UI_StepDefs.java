@@ -14,6 +14,7 @@ import pages.SearchPage;
 import pages.ProductPage;
 import pages.CartPage;
 import utils.Driver;
+import utils.LoggerUtils;
 
 import java.time.Duration;
 import java.util.List;
@@ -33,6 +34,7 @@ public class UI_StepDefs {
 
     @Given("user navigates to amazon")
     public void user_navigates_to_amazon() {
+        LoggerUtils.info("Amazon anasayfasina gidiliyor: https://www.amazon.com.tr");
         Driver.getDriver().get("https://www.amazon.com.tr");
         try {
             wait.until(ExpectedConditions.elementToBeClickable(homePage.cookieAccept)).click();
@@ -43,6 +45,7 @@ public class UI_StepDefs {
 
     @When("user searches for {string}")
     public void user_searches_for(String item) {
+        LoggerUtils.info("Arama kutusuna '" + item + "' yaziliyor ve arama yapiliyor.");
         wait.until(ExpectedConditions.visibilityOf(homePage.searchBox)).clear();
         homePage.searchBox.sendKeys(item);
         try {
@@ -54,6 +57,7 @@ public class UI_StepDefs {
 
     @When("user filters price between {string} and {string}")
     public void user_filters_price_between_and(String min, String max) {
+        LoggerUtils.info("Fiyat filtresi uygulaniyor: " + min + " TL ile " + max + " TL arasi.");
         try {
             wait.until(ExpectedConditions.visibilityOf(searchPage.minPriceInput)).clear();
             searchPage.minPriceInput.sendKeys(min);
@@ -71,6 +75,7 @@ public class UI_StepDefs {
 
     @When("user sorts the results by lowest price")
     public void user_sorts_the_results_by_lowest_price() {
+        LoggerUtils.info("Sonuclar fiyata gore (Dusukten Yuksege) siralanir.");
         try {
             String url = Driver.getDriver().getCurrentUrl();
             String separator = url.contains("?") ? "&" : "?";
@@ -83,6 +88,7 @@ public class UI_StepDefs {
 
     @When("user selects the lowest priced product")
     public void user_selects_the_lowest_priced_product() {
+        LoggerUtils.info("Listelenen urunler arasindan en dusuk fiyatli gecerli cep telefonu seciliyor.");
         try {
             wait.until(ExpectedConditions.visibilityOfAllElements(searchPage.productList));
             List<WebElement> products = searchPage.productList;
@@ -133,6 +139,7 @@ public class UI_StepDefs {
 
     @When("user adds the product to the cart from the seller with the lowest rating")
     public void user_adds_the_product_to_the_cart_from_the_seller_with_the_lowest_rating() {
+        LoggerUtils.info("Urun sepete ekleniyor.");
         try { Thread.sleep(2000); } catch(Exception e){}
         
         try {
@@ -158,6 +165,7 @@ public class UI_StepDefs {
 
     @Then("user verifies the selected product title and price match the cart")
     public void user_verifies_the_selected_product_title_and_price_match_the_cart() {
+        LoggerUtils.info("Sepete gidilip secilen urun ile sepetteki urunun baslik ve fiyati karsilastiriliyor.");
         try {
             Thread.sleep(3000); // Wait for Add to Cart animation/ajax
             Driver.getDriver().get("https://www.amazon.com.tr/cart");

@@ -1,4 +1,4 @@
-@ui
+@all @ui
 Feature: E-Commerce Product Purchase
   
   Scenario: Search, Sort by Price, and Verify Cart
