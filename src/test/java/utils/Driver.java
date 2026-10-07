@@ -43,16 +43,24 @@ public class Driver {
                     firefoxOptions.addPreference("dom.webdriver.enabled", false);
                     firefoxOptions.addArguments("--disable-blink-features=AutomationControlled");
                     firefoxOptions.addArguments("-private");
-                    if (isCI()) firefoxOptions.addArguments("-headless", "--width=1920", "--height=1080");
+                    if (isCI()) {
+                        firefoxOptions.addArguments("-headless", "--width=1920", "--height=1080");
+                        firefoxOptions.addPreference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36");
+                    }
                     driverPool.set(new FirefoxDriver(firefoxOptions));
                     break;
                 case "edge":
-                    System.setProperty("webdriver.edge.driver", "driver/msedgedriver.exe");
+                    if (!isCI()) {
+                        System.setProperty("webdriver.edge.driver", "driver/msedgedriver.exe");
+                    }
                     org.openqa.selenium.edge.EdgeOptions edgeOptions = new org.openqa.selenium.edge.EdgeOptions();
                     edgeOptions.addArguments("--remote-allow-origins=*");
                     edgeOptions.addArguments("--disable-blink-features=AutomationControlled");
                     edgeOptions.addArguments("-inprivate");
-                    if (isCI()) edgeOptions.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--window-size=1920,1080");
+                    if (isCI()) {
+                        edgeOptions.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--window-size=1920,1080");
+                        edgeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36");
+                    }
                     edgeOptions.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
                     driverPool.set(new EdgeDriver(edgeOptions));
                     break;
@@ -62,7 +70,10 @@ public class Driver {
                     chromeOptions.addArguments("--remote-allow-origins=*");
                     chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
                     chromeOptions.addArguments("--incognito");
-                    if (isCI()) chromeOptions.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--window-size=1920,1080");
+                    if (isCI()) {
+                        chromeOptions.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--window-size=1920,1080");
+                        chromeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36");
+                    }
                     chromeOptions.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
                     driverPool.set(new ChromeDriver(chromeOptions));
                     break;

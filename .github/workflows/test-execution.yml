@@ -40,7 +40,14 @@ jobs:
     - name: Install Mock Server dependencies
       run: npm install --prefix mock-server
 
-    # ubuntu-latest uzerinde Chrome, Firefox ve Edge kurulu gelir.
+    - name: Install Microsoft Edge
+      run: |
+        sudo mkdir -p /etc/apt/keyrings
+        curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/keyrings/microsoft-edge.gpg
+        echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main" | sudo tee /etc/apt/sources.list.d/microsoft-edge-dev.list
+        sudo apt-get update && sudo apt-get install -y microsoft-edge-stable
+
+    # ubuntu-latest uzerinde Chrome, Firefox kurulu gelir, Edge yukarida kuruldu.
     # GitHub Actions CI=true set eder -> Driver.java tarayicilari headless acar.
     - name: Run Tests (API + Chrome/Firefox/Edge paralel)
       run: mvn clean verify
