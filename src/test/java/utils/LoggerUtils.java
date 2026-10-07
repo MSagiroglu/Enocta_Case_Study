@@ -39,10 +39,10 @@ public class LoggerUtils {
             browser = Driver.getBrowserName().toUpperCase();
         }
 
-        // Determine Tag instead of Emoji for cross-platform safety
-        String tag = "[INFO]";
-        if (level.equals("ERROR")) tag = "[FAIL]";
-        else if (level.equals("SUCCESS")) tag = "[ OK ]";
+        // Determine emoji
+        String emoji = "ℹ️";
+        if (level.equals("ERROR")) emoji = "❌";
+        else if (level.equals("SUCCESS")) emoji = "✅";
 
         // Determine color
         String color = "\u001B[36m"; // Default Cyan
@@ -58,7 +58,7 @@ public class LoggerUtils {
             color = "\u001B[32m"; // Green for API
         }
 
-        String logEntryConsole = String.format("%s%s [%s] [%s] [%s] - %s\u001B[0m", color, tag, timestamp, threadId, browser, message);
+        String logEntryConsole = String.format("%s[%s] [%s] [%s] [%s] - %s %s\u001B[0m", color, emoji, timestamp, threadId, browser, message, emoji);
         String logEntryFile = String.format("[%s] [%s] [%s] [%s] - %s", timestamp, level, threadId, browser, message);
         
         System.out.println(logEntryConsole);
