@@ -39,10 +39,10 @@ public class LoggerUtils {
             browser = Driver.getBrowserName().toUpperCase();
         }
 
-        // Determine emoji
-        String emoji = "ℹ️";
-        if (level.equals("ERROR")) emoji = "❌";
-        else if (level.equals("SUCCESS")) emoji = "✅";
+        // Determine emoji (Using unicode escapes for cross-platform safety)
+        String emoji = "\u2139\uFE0F"; // Info
+        if (level.equals("ERROR")) emoji = "\u274C"; // Cross
+        else if (level.equals("SUCCESS")) emoji = "\u2705"; // Check
 
         // Determine color
         String color = "\u001B[36m"; // Default Cyan
