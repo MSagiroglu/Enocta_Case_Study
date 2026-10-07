@@ -11,7 +11,7 @@ public class Hooks {
     
     @Before("@ui")
     public void setUp(Scenario scenario) {
-        String browser = Driver.getBrowserName() != null ? Driver.getBrowserName().toUpperCase() : "CHROME";
+        String browser = Driver.getBrowserName() != null ? Driver.getBrowserName().toUpperCase(java.util.Locale.ENGLISH) : "CHROME";
         scenario.log("TESTING ON BROWSER: " + browser);
         utils.LoggerUtils.info("UI Testleri basliyor: " + browser + " tarayicisi baslatiliyor...");
         Driver.getDriver().manage().window().maximize();
@@ -20,7 +20,7 @@ public class Hooks {
 
     @After("@ui")
     public void tearDown(Scenario scenario) {
-        String browser = Driver.getBrowserName() != null ? Driver.getBrowserName().toUpperCase() : "CHROME";
+        String browser = Driver.getBrowserName() != null ? Driver.getBrowserName().toUpperCase(java.util.Locale.ENGLISH) : "CHROME";
         if (scenario.isFailed()) {
             utils.LoggerUtils.error(browser + " tarayicisinda test HATA aldi! Ekran goruntusu aliniyor...");
             final byte[] screenshot = ((TakesScreenshot) Driver.getDriver()).getScreenshotAs(OutputType.BYTES);

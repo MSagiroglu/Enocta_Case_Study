@@ -17,7 +17,7 @@ public class ConfigReader {
     }
 
     public static String getProperty(String key) {
-        String sysProp = System.getenv(key.toUpperCase().replace(".", "_"));
+        String sysProp = System.getenv(key.toUpperCase(java.util.Locale.ENGLISH).replace(".", "_"));
         if (sysProp != null) return sysProp;
         return properties.getProperty(key);
     }

@@ -24,7 +24,7 @@ public class Driver {
     public static WebDriver getDriver() {
         if (driverPool.get() == null) {
             String browser = browserName.get() != null ? browserName.get() : ConfigReader.getProperty("browser");
-            switch (browser.toLowerCase()) {
+            switch (browser.toLowerCase(java.util.Locale.ENGLISH)) {
                 case "remote-chrome":
                     try {
                         ChromeOptions options = new ChromeOptions();

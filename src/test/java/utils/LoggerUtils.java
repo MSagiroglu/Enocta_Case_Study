@@ -32,11 +32,11 @@ public class LoggerUtils {
     private static synchronized void log(String level, String message) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String threadId = "Worker-" + Thread.currentThread().getId();
-        String browser = ConfigReader.getProperty("browser").toUpperCase(); // Default
+        String browser = ConfigReader.getProperty("browser").toUpperCase(java.util.Locale.ENGLISH); // Default
         
         // If Driver has a thread local browser name (cross-browser run), use it
         if (Driver.getBrowserName() != null) {
-            browser = Driver.getBrowserName().toUpperCase();
+            browser = Driver.getBrowserName().toUpperCase(java.util.Locale.ENGLISH);
         }
 
         // Determine Tag instead of Emoji for cross-platform safety
