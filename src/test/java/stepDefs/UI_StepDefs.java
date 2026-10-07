@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import utils.Driver;
@@ -37,7 +38,7 @@ public class UI_StepDefs extends BaseStep {
         try {
             click(homePage.searchButton, "Arama Butonu");
         } catch (Exception e) {
-            homePage.searchBox.sendKeys(org.openqa.selenium.Keys.ENTER);
+            homePage.searchBox.sendKeys(Keys.ENTER);
         }
     }
 
