@@ -12,4 +12,9 @@ import utils.Driver;
 )
 public class ApiRunner extends AbstractTestNGCucumberTests {
     static { MockServerManager.startServer(); }
+
+    @BeforeTest
+    public void setupBrowser() {
+        Driver.setBrowser("api");
+    }
 }
