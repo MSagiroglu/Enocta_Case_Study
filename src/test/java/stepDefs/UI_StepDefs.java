@@ -69,7 +69,10 @@ public class UI_StepDefs {
         
         // Hard wait yerine sayfanin (yeni sonuclarin) yuklenmesini dinamik bekle
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.s-main-slot")));
-        wait.until(ExpectedConditions.urlContains("low-price"));
+        wait.until(ExpectedConditions.or(
+            ExpectedConditions.urlContains("low-price"),
+            ExpectedConditions.urlContains("p_36")
+        ));
     }
 
     @When("user selects a random product from the last row")
