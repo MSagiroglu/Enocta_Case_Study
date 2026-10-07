@@ -8,7 +8,7 @@ import utils.Driver;
     tags = "@api",
     features = "src/test/resources/features",
     glue = {"stepDefs", "hooks"},
-    plugin = {"json:target/cucumber-api.json", "html:target/cucumber-api.html", "rerun:target/failed_scenarios_api.txt"}
+    plugin = {"json:target/cucumber-api.json", "html:target/cucumber-api.html", "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm", "rerun:target/failed_scenarios_api.txt"}
 )
 public class ApiRunner extends AbstractTestNGCucumberTests {
     static { MockServerManager.startServer(); }

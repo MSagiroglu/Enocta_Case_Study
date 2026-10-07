@@ -8,7 +8,7 @@ import utils.Driver;
     tags = "@ui",
     features = "src/test/resources/features",
     glue = {"stepDefs", "hooks"},
-    plugin = {"json:target/cucumber-firefox.json", "html:target/cucumber-firefox.html", "rerun:target/failed_scenarios_firefox.txt"}
+    plugin = {"json:target/cucumber-firefox.json", "html:target/cucumber-firefox.html", "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm", "rerun:target/failed_scenarios_firefox.txt"}
 )
 public class FirefoxRunner extends AbstractTestNGCucumberTests {
     static { MockServerManager.startServer(); }

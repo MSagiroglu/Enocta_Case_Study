@@ -8,7 +8,7 @@ import utils.Driver;
     tags = "@ui",
     features = "src/test/resources/features",
     glue = {"stepDefs", "hooks"},
-    plugin = {"json:target/cucumber-chrome.json", "html:target/cucumber-chrome.html", "rerun:target/failed_scenarios_chrome.txt"}
+    plugin = {"json:target/cucumber-chrome.json", "html:target/cucumber-chrome.html", "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm", "rerun:target/failed_scenarios_chrome.txt"}
 )
 public class ChromeRunner extends AbstractTestNGCucumberTests {
     static { MockServerManager.startServer(); }

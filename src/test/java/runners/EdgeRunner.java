@@ -8,7 +8,7 @@ import utils.Driver;
     tags = "@ui",
     features = "src/test/resources/features",
     glue = {"stepDefs", "hooks"},
-    plugin = {"json:target/cucumber-edge.json", "html:target/cucumber-edge.html", "rerun:target/failed_scenarios_edge.txt"}
+    plugin = {"json:target/cucumber-edge.json", "html:target/cucumber-edge.html", "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm", "rerun:target/failed_scenarios_edge.txt"}
 )
 public class EdgeRunner extends AbstractTestNGCucumberTests {
     static { MockServerManager.startServer(); }
