@@ -10,7 +10,7 @@ public class ProductPage extends BasePage {
     @FindBy(css = ".a-price.a-text-price.a-size-medium .a-offscreen, .a-price .a-offscreen")
     public List<WebElement> productPrices;
 
-    @FindBy(xpath = "//a[contains(@title, 'diğer satıcı')] | //a[contains(text(), 'Yeni ve İkinci El')] | //a[contains(text(), 'diğer seçenek')]")
+    @FindBy(xpath = "//a[contains(@title, 'diğer satıcı')] | //a[contains(text(), 'Yeni ve İkinci El')] | //a[contains(text(), 'diğer seçenek')] | //a[contains(@title, 'Daha Fazla')] | //a[contains(@href, 'offer-listing')]")
     public WebElement otherSellersLink;
 
     @FindBy(id = "aod-offer-list")

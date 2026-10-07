@@ -171,9 +171,10 @@ public class UI_StepDefs extends BaseStep {
             
             waitForAllElements(cartPage.cartItems, "Sepet Urunleri");
             Assert.assertTrue(cartPage.cartItems.size() > 0, "Cart is empty on Amazon!");
+            Assert.assertTrue(cartPage.cartItemTitles.size() > 0, "Cart item titles not found in DOM!");
             
             String actualTitle = getText(cartPage.cartItemTitles.get(0), "Sepet Urun Basligi").trim();
-            String actualPrice = getText(cartPage.cartItemPrices.get(0), "Sepet Urun Fiyati").trim().replaceAll("[^0-9,]", "");
+            String actualPrice = cartPage.cartItemPrices.size() > 0 ? getText(cartPage.cartItemPrices.get(0), "Sepet Urun Fiyati").trim().replaceAll("[^0-9,]", "") : "";
             
             // Compare first 20 chars of title as Amazon sometimes truncates cart titles
             int compareLen = Math.min(20, Math.min(expectedTitle.length(), actualTitle.length()));
