@@ -46,10 +46,9 @@ public class UI_StepDefs {
     @When("user searches for {string}")
     public void user_searches_for(String item) {
         LoggerUtils.info("Arama kutusuna '" + item + "' yaziliyor ve arama yapiliyor.");
-        wait.until(ExpectedConditions.visibilityOf(homePage.searchBox)).clear();
-        homePage.searchBox.sendKeys(item);
+        utils.ReusableMethods.sendKeys(homePage.searchBox, item, "Arama Kutusu");
         try {
-            homePage.searchButton.click();
+            utils.ReusableMethods.click(homePage.searchButton, "Arama Butonu");
         } catch (Exception e) {
             homePage.searchBox.sendKeys(org.openqa.selenium.Keys.ENTER);
         }
@@ -59,11 +58,9 @@ public class UI_StepDefs {
     public void user_filters_price_between_and(String min, String max) {
         LoggerUtils.info("Fiyat filtresi uygulaniyor: " + min + " TL ile " + max + " TL arasi.");
         try {
-            wait.until(ExpectedConditions.visibilityOf(searchPage.minPriceInput)).clear();
-            searchPage.minPriceInput.sendKeys(min);
-            searchPage.maxPriceInput.clear();
-            searchPage.maxPriceInput.sendKeys(max);
-            js.executeScript("arguments[0].click();", searchPage.goButton);
+            utils.ReusableMethods.sendKeys(searchPage.minPriceInput, min, "Minimum Fiyat");
+            utils.ReusableMethods.sendKeys(searchPage.maxPriceInput, max, "Maksimum Fiyat");
+            utils.ReusableMethods.clickWithJS(searchPage.goButton, "Fiyat Git Butonu");
             Thread.sleep(2000);
         } catch (Exception e) {
             String url = Driver.getDriver().getCurrentUrl();
@@ -90,7 +87,7 @@ public class UI_StepDefs {
     public void user_selects_the_lowest_priced_product() {
         LoggerUtils.info("Listelenen urunler arasindan en dusuk fiyatli gecerli cep telefonu seciliyor.");
         try {
-            wait.until(ExpectedConditions.visibilityOfAllElements(searchPage.productList));
+            utils.ReusableMethods.waitForAllElements(searchPage.productList, "Urun Listesi");
             List<WebElement> products = searchPage.productList;
             
             WebElement selectedProduct = null;
@@ -125,8 +122,7 @@ public class UI_StepDefs {
             Driver.getDriver().get(url);
             
             // Save state for assertion
-            wait.until(ExpectedConditions.visibilityOf(productPage.productTitle));
-            expectedTitle = productPage.productTitle.getText().trim();
+            expectedTitle = utils.ReusableMethods.getText(productPage.productTitle, "Urun Basligi").trim();
             
             if (productPage.productPrices.size() > 0) {
                 expectedPrice = productPage.productPrices.get(0).getAttribute("textContent").trim().replaceAll("[^0-9,]", "");
@@ -140,23 +136,22 @@ public class UI_StepDefs {
     @When("user adds the product to the cart from the seller with the lowest rating")
     public void user_adds_the_product_to_the_cart_from_the_seller_with_the_lowest_rating() {
         LoggerUtils.info("Urun sepete ekleniyor.");
-        try { Thread.sleep(2000); } catch(Exception e){}
+        utils.ReusableMethods.hardWait(2);
         
         try {
-            js.executeScript("arguments[0].click();", productPage.otherSellersLink);
-            wait.until(ExpectedConditions.visibilityOf(productPage.otherSellersPanel));
+            utils.ReusableMethods.clickWithJS(productPage.otherSellersLink, "Diger Saticilar Linki");
+            utils.ReusableMethods.waitForVisibility(productPage.otherSellersPanel, "Diger Saticilar Paneli");
             
             if(productPage.otherSellersList.size() > 0) {
                 WebElement firstOtherSellerAddBtn = productPage.otherSellersList.get(0).findElement(By.cssSelector("input[name='submit.addToCart']"));
-                js.executeScript("arguments[0].click();", firstOtherSellerAddBtn);
+                utils.ReusableMethods.clickWithJS(firstOtherSellerAddBtn, "Diger Satici Sepete Ekle Butonu");
                 return;
             } else {
                 throw new Exception("No other sellers in list");
             }
         } catch (Exception e) {
              try {
-                 wait.until(ExpectedConditions.visibilityOf(productPage.defaultAddToCartButton));
-                 js.executeScript("arguments[0].click();", productPage.defaultAddToCartButton);
+                 utils.ReusableMethods.clickWithJS(productPage.defaultAddToCartButton, "Varsayilan Sepete Ekle Butonu");
              } catch(Exception ex) {
                  Assert.fail("No Add to Cart button found. Product might be out of stock.");
              }
@@ -167,14 +162,14 @@ public class UI_StepDefs {
     public void user_verifies_the_selected_product_title_and_price_match_the_cart() {
         LoggerUtils.info("Sepete gidilip secilen urun ile sepetteki urunun baslik ve fiyati karsilastiriliyor.");
         try {
-            Thread.sleep(3000); // Wait for Add to Cart animation/ajax
+            utils.ReusableMethods.hardWait(3); // Wait for Add to Cart animation/ajax
             Driver.getDriver().get("https://www.amazon.com.tr/cart");
             
-            wait.until(ExpectedConditions.visibilityOfAllElements(cartPage.cartItems));
+            utils.ReusableMethods.waitForAllElements(cartPage.cartItems, "Sepet Urunleri");
             Assert.assertTrue(cartPage.cartItems.size() > 0, "Cart is empty on Amazon!");
             
-            String actualTitle = cartPage.cartItemTitles.get(0).getText().trim();
-            String actualPrice = cartPage.cartItemPrices.get(0).getText().trim().replaceAll("[^0-9,]", "");
+            String actualTitle = utils.ReusableMethods.getText(cartPage.cartItemTitles.get(0), "Sepet Urun Basligi").trim();
+            String actualPrice = utils.ReusableMethods.getText(cartPage.cartItemPrices.get(0), "Sepet Urun Fiyati").trim().replaceAll("[^0-9,]", "");
             
             // Compare first 20 chars of title as Amazon sometimes truncates cart titles
             int compareLen = Math.min(20, Math.min(expectedTitle.length(), actualTitle.length()));
