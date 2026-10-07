@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <cucumber.version>7.14.0</cucumber.version>
-        <selenium.version>4.25.0</selenium.version>
+        <selenium.version>4.33.0</selenium.version>
         <restassured.version>5.4.0</restassured.version>
         <testng.version>7.8.0</testng.version>
     </properties>
