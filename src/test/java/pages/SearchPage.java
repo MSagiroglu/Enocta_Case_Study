@@ -1,0 +1,24 @@
+package pages;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import java.util.List;
+
+public class SearchPage extends BasePage {
+    @FindBy(id = "low-price")
+    public WebElement minPriceInput;
+
+    @FindBy(id = "high-price")
+    public WebElement maxPriceInput;
+
+    @FindBy(className = "a-button-input")
+    public WebElement goButton;
+
+    @FindBy(css = "div[data-component-type='s-search-result']")
+    public List<WebElement> productList;
+    
+    @FindBy(xpath = "//span[text()='Düşükten Yükseğe']")
+    public WebElement sortLowToHighOption;
+    
+    @FindBy(className = "a-dropdown-prompt")
+    public WebElement sortDropdown;
+}
