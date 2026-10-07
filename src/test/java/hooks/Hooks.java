@@ -8,10 +8,16 @@ import utils.Driver;
 import java.time.Duration;
 import java.util.Locale;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Hooks {
     
     @Before("@ui")
     public void setUp(Scenario scenario) {
+        // Selenium loglarini kapat (CDP Version uyari kirliligini onler)
+        Logger.getLogger("org.openqa.selenium").setLevel(Level.OFF);
+        
         String browser = Driver.getBrowserName() != null ? Driver.getBrowserName().toUpperCase(Locale.ENGLISH) : "CHROME";
         scenario.log("TESTING ON BROWSER: " + browser);
         utils.LoggerUtils.info("UI Testleri basliyor: " + browser + " tarayicisi baslatiliyor...");

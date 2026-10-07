@@ -61,10 +61,15 @@ public class UI_StepDefs {
         wait.until(ExpectedConditions.urlContains("k="));
 
         String currentUrl = Driver.getDriver().getCurrentUrl();
-        String separator = currentUrl.contains("?") ? "&" : "?";
-        // Kullanicinin ilettigi URL formati: rnid ve low/high price
-        Driver.getDriver().get(currentUrl + separator + "rnid=13736708031&low-price=" + min + "&high-price=" + max);
-        ReusableMethods.hardWait(3);
+        if (!currentUrl.contains("low-price")) {
+            String separator = currentUrl.contains("?") ? "&" : "?";
+            String targetUrl = currentUrl + separator + "rnid=13736708031&low-price=" + min + "&high-price=" + max;
+            Driver.getDriver().get(targetUrl);
+        }
+        
+        // Hard wait yerine sayfanin (yeni sonuclarin) yuklenmesini dinamik bekle
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.s-main-slot")));
+        wait.until(ExpectedConditions.urlContains("low-price"));
     }
 
     @When("user selects a random product from the last row")
@@ -132,7 +137,9 @@ public class UI_StepDefs {
 
                 LoggerUtils.info("Secilen urun: " + url);
                 Driver.getDriver().get(url);
-                ReusableMethods.hardWait(2);
+                // Hard wait yerine urun basliginin yuklenmesini bekle
+                WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
+                wait.until(ExpectedConditions.presenceOfElementLocated(By.id("productTitle")));
             } else {
                 Assert.fail("No products found on the search page.");
             }
@@ -144,9 +151,9 @@ public class UI_StepDefs {
     @When("user adds the product to the cart from the seller with the lowest rating")
     public void user_adds_the_product_to_the_cart_from_the_seller_with_the_lowest_rating() {
         LoggerUtils.info("Diger saticilar arasindan en dusuk puanli sepete ekleniyor.");
+        WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
 
         try {
-            ReusableMethods.hardWait(2);
             boolean hasOtherSellers = false;
 
             try {
@@ -157,7 +164,8 @@ public class UI_StepDefs {
 
             if (hasOtherSellers) {
                 ReusableMethods.clickWithJS(productPage.otherSellersLink, "Diger Saticilar Linki");
-                ReusableMethods.hardWait(3);
+                // Hard wait yerine saticilar listesinin DOM'a inmesini bekle
+                wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#aod-offer-list, #aod-offer")));
 
                 List<WebElement> sellers = productPage.otherSellersList;
 
@@ -225,7 +233,13 @@ public class UI_StepDefs {
     public void user_verifies_the_product_is_in_the_cart() {
         LoggerUtils.info("Sepete gidilip urun kontrol ediliyor.");
         try {
-            ReusableMethods.hardWait(3);
+            // Hard wait yerine sepet sayacinin degismesini veya sepete eklendi mesajini bekle
+            WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
+            try {
+                wait.until(ExpectedConditions.not(ExpectedConditions.textToBe(By.id("nav-cart-count"), "0")));
+            } catch (Exception e) {
+                // Ignore if it doesn't change immediately, proceed to cart anyway
+            }
             Driver.getDriver().get("https://www.amazon.com.tr/cart");
             ReusableMethods.waitForVisibility(Driver.getDriver().findElement(By.cssSelector(".sc-list-item")), "Sepet Listesi");
             List<WebElement> items = cartPage.cartItems;
