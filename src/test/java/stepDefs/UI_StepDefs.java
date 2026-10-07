@@ -58,7 +58,8 @@ public class UI_StepDefs {
 
         String currentUrl = Driver.getDriver().getCurrentUrl();
         String separator = currentUrl.contains("?") ? "&" : "?";
-        Driver.getDriver().get(currentUrl + separator + "low-price=" + min + "&high-price=" + max);
+        // Kullanicinin ilettigi URL formati: rnid ve low/high price
+        Driver.getDriver().get(currentUrl + separator + "rnid=13736708031&low-price=" + min + "&high-price=" + max);
         ReusableMethods.hardWait(3);
     }
 
