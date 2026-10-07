@@ -20,9 +20,9 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     public void setupBrowser(@Optional String browser) {
         if (browser != null) {
             Driver.setBrowser(browser);
-            System.setProperty("cucumber.plugin", "json:target/cucumber-" + browser + ".json, html:target/cucumber-" + browser + ".html");
+            System.setProperty("cucumber.plugin", "json:target/cucumber-" + browser + ".json, html:target/cucumber-" + browser + ".html, rerun:target/failed_scenarios_" + browser + ".txt");
         } else {
-            System.setProperty("cucumber.plugin", "json:target/cucumber-default.json, html:target/cucumber-default.html");
+            System.setProperty("cucumber.plugin", "json:target/cucumber-default.json, html:target/cucumber-default.html, rerun:target/failed_scenarios_default.txt");
         }
     }
     
