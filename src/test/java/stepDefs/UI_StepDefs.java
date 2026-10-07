@@ -51,6 +51,11 @@ public class UI_StepDefs {
     @When("user filters price between {string} and {string}")
     public void user_filters_price_between_and(String min, String max) {
         LoggerUtils.info("Fiyat araligi filtresi dogrudan URL uzerinden uygulaniyor: " + min + " - " + max + " TL");
+        
+        // Arama butonuna basildiktan sonra sayfanin yuklenmesini bekle (URL degismeli)
+        org.openqa.selenium.support.ui.WebDriverWait wait = new org.openqa.selenium.support.ui.WebDriverWait(Driver.getDriver(), java.time.Duration.ofSeconds(10));
+        wait.until(org.openqa.selenium.support.ui.ExpectedConditions.urlContains("k="));
+
         String currentUrl = Driver.getDriver().getCurrentUrl();
         String separator = currentUrl.contains("?") ? "&" : "?";
         Driver.getDriver().get(currentUrl + separator + "low-price=" + min + "&high-price=" + max);
