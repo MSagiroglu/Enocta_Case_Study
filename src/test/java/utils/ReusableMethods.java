@@ -98,6 +98,26 @@ public class ReusableMethods {
         }
     }
 
+    public static void waitForUrlContains(String text) {
+        try {
+            getWait().until(ExpectedConditions.urlContains(text));
+            LoggerUtils.info("URL'nin '" + text + "' metnini icermesi beklendi (Explicit Wait).");
+        } catch (Exception e) {
+            LoggerUtils.error("URL '" + text + "' metnini icermedi: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public static void waitForPageToLoad() {
+        try {
+            getWait().until(driver -> ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
+            LoggerUtils.info("Sayfanin DOM yapisinin tamamen yuklenmesi (readyState=complete) beklendi.");
+        } catch (Exception e) {
+            LoggerUtils.error("Sayfa tam anlamiyla yuklenemedi: " + e.getMessage());
+            throw e;
+        }
+    }
+
     // ==========================================
     // DROPDOWN METHODS
     // ==========================================

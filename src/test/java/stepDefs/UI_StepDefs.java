@@ -49,12 +49,12 @@ public class UI_StepDefs extends BaseStep {
             sendKeys(searchPage.minPriceInput, min, "Minimum Fiyat");
             sendKeys(searchPage.maxPriceInput, max, "Maksimum Fiyat");
             clickWithJS(searchPage.goButton, "Fiyat Git Butonu");
-            hardWait(2);
+            waitForUrlContains("p_36");
         } catch (Exception e) {
             String url = Driver.getDriver().getCurrentUrl();
             String separator = url.contains("?") ? "&" : "?";
             Driver.getDriver().get(url + separator + "rh=p_36%3A" + min + "00-" + max + "00");
-            hardWait(2);
+            waitForPageToLoad();
         }
     }
 
@@ -65,7 +65,7 @@ public class UI_StepDefs extends BaseStep {
             String url = Driver.getDriver().getCurrentUrl();
             String separator = url.contains("?") ? "&" : "?";
             Driver.getDriver().get(url + separator + "s=price-asc-rank");
-            hardWait(2);
+            waitForPageToLoad();
         } catch (Exception e) {
             Assert.fail("Failed to sort by lowest price");
         }
@@ -104,7 +104,7 @@ public class UI_StepDefs extends BaseStep {
             boolean productSelected = false;
             for (String url : validUrls) {
                 Driver.getDriver().get(url);
-                hardWait(2);
+                waitForPageToLoad();
                 
                 // Sepete ekle butonu veya Diger saticilar butonu var mi kontrol et
                 boolean canBuy = Driver.getDriver().findElements(By.cssSelector("input#add-to-cart-button, input[name='submit.addToCart']")).size() > 0;
@@ -132,7 +132,6 @@ public class UI_StepDefs extends BaseStep {
     @When("user adds the product to the cart from the seller with the lowest rating")
     public void kullanici_urunu_en_dusuk_puanli_saticidan_sepete_ekler() {
         info("Urun sepete ekleniyor.");
-        hardWait(2);
         
         try {
             clickWithJS(productPage.otherSellersLink, "Diger Saticilar Linki");
@@ -163,19 +162,31 @@ public class UI_StepDefs extends BaseStep {
         
         // Amazon bazen sigorta/koruma paketi cikarir: "Hayir tesekkurler" butonuna tikla eger varsa
         try {
-            hardWait(2);
-            WebElement noThanksBtn = Driver.getDriver().findElement(By.xpath("//input[@aria-labelledby='attachSiNoCoverage-announce'] | //button[contains(text(), 'Hayır')] | //input[contains(@aria-labelledby, 'NoCoverage')]"));
+            Driver.getDriver().manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(2));
+            org.openqa.selenium.support.ui.WebDriverWait shortWait = new org.openqa.selenium.support.ui.WebDriverWait(Driver.getDriver(), java.time.Duration.ofSeconds(3));
+            WebElement noThanksBtn = shortWait.until(org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable(By.xpath("//input[@aria-labelledby='attachSiNoCoverage-announce'] | //button[contains(text(), 'Hayır')] | //input[contains(@aria-labelledby, 'NoCoverage')]")));
             clickWithJS(noThanksBtn, "Koruma Paketi Iptal Butonu");
-        } catch(Exception ignored) {}
-
-        hardWait(2);
+        } catch(Exception ignored) {
+        } finally {
+            Driver.getDriver().manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(10));
+        }
     }
 
     @Then("user verifies the selected product title and price match the cart")
     public void kullanici_secilen_urun_ile_sepetteki_urunun_baslik_ve_fiyatini_dogrular() {
         info("Sepete gidilip secilen urun ile sepetteki urunun baslik ve fiyati karsilastiriliyor.");
         try {
-            hardWait(3); // Wait for Add to Cart animation/ajax
+            // Sepet ikonundaki sayinin guncellenmesini bekle (Explicit Wait for AJAX)
+            try {
+                org.openqa.selenium.support.ui.WebDriverWait wait = new org.openqa.selenium.support.ui.WebDriverWait(Driver.getDriver(), java.time.Duration.ofSeconds(10));
+                wait.until(driver -> {
+                    try {
+                        String count = driver.findElement(By.id("nav-cart-count")).getText();
+                        return !count.isEmpty() && !count.equals("0");
+                    } catch(Exception e) { return false; }
+                });
+            } catch(Exception ignored) {}
+            
             Driver.getDriver().get("https://www.amazon.com.tr/cart");
             
             waitForAllElements(cartPage.cartItems, "Sepet Urunleri");
