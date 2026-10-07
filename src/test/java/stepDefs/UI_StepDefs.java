@@ -64,7 +64,7 @@ public class UI_StepDefs {
             LoggerUtils.warning("Fiyat kutulari DOM'da bulunamadi, URL parametresiyle fallback...");
             String currentUrl = Driver.getDriver().getCurrentUrl();
             String separator = currentUrl.contains("?") ? "&" : "?";
-            Driver.getDriver().get(currentUrl + separator + "rh=p_36%3A" + min + "00-" + max + "00");
+            Driver.getDriver().get(currentUrl + separator + "low-price=" + min + "&high-price=" + max);
             ReusableMethods.hardWait(3);
         }
     }

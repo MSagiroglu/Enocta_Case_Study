@@ -68,7 +68,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.3</version>
                 <configuration>
-                    <argLine>-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8</argLine>
+                    <argLine>-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -Dallure.results.directory="target/allure-results"</argLine>
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/runners/testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
