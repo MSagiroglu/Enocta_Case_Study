@@ -14,41 +14,56 @@ public class API_StepDefs {
     private Response lastResponse;
 
     @Given("user gets a token from mock server")
-    public void user_gets_a_token_from_mock_server() {
+    public void kullanici_mock_sunucusundan_token_alir() {
         info("Mock server'dan token aliniyor...");
+        // RestAssured ayari: Temel URL'i (BaseURI) ConfigReader uzerinden properties dosyasindan cekiyoruz.
         RestAssured.baseURI = ConfigReader.getProperty("mock.server.url");
+        
+        // given(): Istek (request) hazirlik asamasidir. Header (baslik) bilgilerini ekliyoruz.
+        // post(): Belirtilen endpoint'e POST istegi atar.
         Response response = given()
             .header("user", "testUser")
             .header("pass", "testPass")
             .post("/token");
+            
+        // jsonPath(): Gelen JSON yanitini (response) parcalamak (parse) icin kullanilir.
         token = response.jsonPath().getString("token");
         info("API Response (Token): " + response.getBody().asString());
-        System.out.println("--- API Response (Token) ---\n" + response.getBody().asString());
     }
 
     @When("user fetches invoice with barcode {string}")
-    public void user_fetches_invoice_with_barcode(String barcode) {
+    public void kullanici_barkod_ile_faturayi_ceker(String barcode) {
         info("Fatura cekiliyor, barkod: " + barcode);
+        
+        // queryParam(): URL'in sonuna soru isareti ile eklenen (örn: ?barcode=123) parametrelerdir.
+        // get(): Belirtilen endpoint'e GET istegi atar.
         lastResponse = given()
             .queryParam("barcode", barcode)
             .get("/viewInvoice");
     }
 
     @Then("the invoice response should be saved to file")
-    public void the_invoice_response_should_be_saved_to_file() throws IOException {
+    public void fatura_yaniti_dosyaya_kaydedilmelidir() throws IOException {
+        // Hedef (target) klasorunun varligini kontrol edip yoksa olusturuyoruz.
         File dir = new File("target");
         if(!dir.exists()) dir.mkdir();
+        
+        // API'den gelen yanitin tam (raw) govdesini String olarak aliyoruz.
         String bodyStr = lastResponse.getBody().asString();
         info("API Response (View Invoice): " + bodyStr);
-        System.out.println("--- API Response (View Invoice) ---\n" + bodyStr);
+        
+        // Yaniti bir JSON dosyasi olarak target klasorune kaydediyoruz.
         FileWriter writer = new FileWriter("target/viewInvoice_response.json");
         writer.write(bodyStr);
         writer.close();
     }
 
     @When("user sends invoice with barcode {string}")
-    public void user_sends_invoice_with_barcode(String barcode) {
+    public void kullanici_barkod_ile_fatura_gonderir(String barcode) {
         info("Fatura gonderiliyor, barkod: " + barcode);
+        
+        // header(): Yetkilendirme (Authorization) icin ilk adimda aldigimiz token'i gonderiyoruz.
+        // body(): POST edilecek JSON verisini (Payload) String formatinda iletiyoruz.
         lastResponse = given()
             .header("token", token)
             .header("Content-Type", "application/json")
@@ -57,10 +72,10 @@ public class API_StepDefs {
     }
     
     @Then("the send invoice response should be saved to file")
-    public void the_send_invoice_response_should_be_saved_to_file() throws IOException {
+    public void gonderilen_fatura_yaniti_dosyaya_kaydedilmelidir() throws IOException {
         String bodyStr = lastResponse.getBody().asString();
         info("API Response (Send Invoice): " + bodyStr);
-        System.out.println("--- API Response (Send Invoice) ---\n" + bodyStr);
+        
         FileWriter writer = new FileWriter("target/sendInvoice_response.json");
         writer.write(bodyStr);
         writer.close();

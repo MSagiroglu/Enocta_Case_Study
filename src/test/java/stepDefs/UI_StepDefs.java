@@ -21,7 +21,7 @@ public class UI_StepDefs extends BaseStep {
     private static String expectedPrice = "";
 
     @Given("user navigates to amazon")
-    public void user_navigates_to_amazon() {
+    public void kullanici_amazon_anasayfasina_gider() {
         info("Amazon anasayfasina gidiliyor: https://www.amazon.com.tr");
         Driver.getDriver().get("https://www.amazon.com.tr");
         try {
@@ -32,7 +32,7 @@ public class UI_StepDefs extends BaseStep {
     }
 
     @When("user searches for {string}")
-    public void user_searches_for(String item) {
+    public void kullanici_arama_yapar(String item) {
         info("Arama kutusuna '" + item + "' yaziliyor ve arama yapiliyor.");
         sendKeys(homePage.searchBox, item, "Arama Kutusu");
         try {
@@ -43,7 +43,7 @@ public class UI_StepDefs extends BaseStep {
     }
 
     @When("user filters price between {string} and {string}")
-    public void user_filters_price_between_and(String min, String max) {
+    public void kullanici_fiyat_filtresi_uygular(String min, String max) {
         info("Fiyat filtresi uygulaniyor: " + min + " TL ile " + max + " TL arasi.");
         try {
             sendKeys(searchPage.minPriceInput, min, "Minimum Fiyat");
@@ -59,7 +59,7 @@ public class UI_StepDefs extends BaseStep {
     }
 
     @When("user sorts the results by lowest price")
-    public void user_sorts_the_results_by_lowest_price() {
+    public void kullanici_sonuclari_en_dusuk_fiyata_gore_siralar() {
         info("Sonuclar fiyata gore (Dusukten Yuksege) siralanir.");
         try {
             String url = Driver.getDriver().getCurrentUrl();
@@ -72,7 +72,7 @@ public class UI_StepDefs extends BaseStep {
     }
 
     @When("user selects the lowest priced product")
-    public void user_selects_the_lowest_priced_product() {
+    public void kullanici_en_dusuk_fiyatli_urunu_secer() {
         info("Listelenen urunler arasindan en dusuk fiyatli gecerli cep telefonu seciliyor.");
         try {
             waitForAllElements(searchPage.productList, "Urun Listesi");
@@ -122,7 +122,7 @@ public class UI_StepDefs extends BaseStep {
     }
 
     @When("user adds the product to the cart from the seller with the lowest rating")
-    public void user_adds_the_product_to_the_cart_from_the_seller_with_the_lowest_rating() {
+    public void kullanici_urunu_en_dusuk_puanli_saticidan_sepete_ekler() {
         info("Urun sepete ekleniyor.");
         hardWait(2);
         
@@ -147,7 +147,7 @@ public class UI_StepDefs extends BaseStep {
     }
 
     @Then("user verifies the selected product title and price match the cart")
-    public void user_verifies_the_selected_product_title_and_price_match_the_cart() {
+    public void kullanici_secilen_urun_ile_sepetteki_urunun_baslik_ve_fiyatini_dogrular() {
         info("Sepete gidilip secilen urun ile sepetteki urunun baslik ve fiyati karsilastiriliyor.");
         try {
             hardWait(3); // Wait for Add to Cart animation/ajax
