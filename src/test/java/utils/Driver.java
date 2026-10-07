@@ -40,7 +40,7 @@ public class Driver {
                     driverPool.set(new FirefoxDriver(firefoxOptions));
                     break;
                 case "edge":
-                    System.setProperty("webdriver.edge.driver", "driver/msedgedriver.exe");
+                    io.github.bonigarcia.wdm.WebDriverManager.edgedriver().setup();
                     org.openqa.selenium.edge.EdgeOptions edgeOptions = new org.openqa.selenium.edge.EdgeOptions();
                     edgeOptions.addArguments("--remote-allow-origins=*");
                     edgeOptions.addArguments("--disable-blink-features=AutomationControlled");
