@@ -33,19 +33,19 @@ public class LoggerUtils {
         log("WARNING", message);
     }
 
-    private static final java.util.concurrent.ConcurrentHashMap<Long, Integer> threadMap = new java.util.concurrent.ConcurrentHashMap<>();
-    private static final java.util.concurrent.atomic.AtomicInteger threadCounter = new java.util.concurrent.atomic.AtomicInteger(1);
+    private static final ConcurrentHashMap<Long, Integer> threadMap = new ConcurrentHashMap<>();
+    private static final AtomicInteger threadCounter = new AtomicInteger(1);
 
     private static synchronized void log(String level, String message) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         long tId = Thread.currentThread().getId();
         int workerId = threadMap.computeIfAbsent(tId, k -> threadCounter.getAndIncrement());
         String threadId = "Worker-" + workerId;
-        String browser = ConfigReader.getProperty("browser").toUpperCase(java.util.Locale.ENGLISH); // Default
+        String browser = ConfigReader.getProperty("browser").toUpperCase(Locale.ENGLISH); // Default
         
         // If Driver has a thread local browser name (cross-browser run), use it
         if (Driver.getBrowserName() != null) {
-            browser = Driver.getBrowserName().toUpperCase(java.util.Locale.ENGLISH);
+            browser = Driver.getBrowserName().toUpperCase(Locale.ENGLISH);
         }
 
         // Determine Tag instead of Emoji for cross-platform safety

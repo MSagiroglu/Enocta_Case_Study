@@ -16,6 +16,7 @@ import utils.ReusableMethods;
 import utils.LoggerUtils;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.time.Duration;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -74,7 +75,7 @@ public class UI_StepDefs {
 
             if (products.size() > 0) {
                 // Sadece telefon olanlari filtrele (aksesuarlari cikar)
-                java.util.List<WebElement> phoneProducts = new java.util.ArrayList<>();
+                List<WebElement> phoneProducts = new ArrayList<>();
                 for (WebElement product : products) {
                     try {
                         String text = product.getText().toLowerCase();

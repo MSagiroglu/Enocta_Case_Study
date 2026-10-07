@@ -21,7 +21,7 @@ public class FailedTestRunner extends AbstractTestNGCucumberTests {
         
         // Eger o browser'da hata yoksa ve dosya olusmamissa, Cucumber patlamasin diye bos bir dosya olustur
         try {
-            java.io.File file = new java.io.File(rerunFile);
+            File file = new File(rerunFile);
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();

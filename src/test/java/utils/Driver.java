@@ -28,7 +28,7 @@ public class Driver {
     public static WebDriver getDriver() {
         if (driverPool.get() == null) {
             String browser = browserName.get() != null ? browserName.get() : ConfigReader.getProperty("browser");
-            switch (browser.toLowerCase(java.util.Locale.ENGLISH)) {
+            switch (browser.toLowerCase(Locale.ENGLISH)) {
                 case "remote-chrome":
                     try {
                         ChromeOptions options = new ChromeOptions();
@@ -45,13 +45,13 @@ public class Driver {
                     driverPool.set(new FirefoxDriver(firefoxOptions));
                     break;
                 case "edge":
-
+                    io.github.bonigarcia.wdm.WebDriverManager.edgedriver().setup();
                     org.openqa.selenium.edge.EdgeOptions edgeOptions = new org.openqa.selenium.edge.EdgeOptions();
                     edgeOptions.addArguments("--remote-allow-origins=*");
                     edgeOptions.addArguments("--disable-blink-features=AutomationControlled");
                     edgeOptions.addArguments("-inprivate");
                     if (isCI()) edgeOptions.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--window-size=1920,1080");
-                    edgeOptions.setExperimentalOption("excludeSwitches", java.util.Collections.singletonList("enable-automation"));
+                    edgeOptions.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
                     driverPool.set(new EdgeDriver(edgeOptions));
                     break;
                 case "chrome":
@@ -61,7 +61,7 @@ public class Driver {
                     chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
                     chromeOptions.addArguments("--incognito");
                     if (isCI()) chromeOptions.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--window-size=1920,1080");
-                    chromeOptions.setExperimentalOption("excludeSwitches", java.util.Collections.singletonList("enable-automation"));
+                    chromeOptions.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
                     driverPool.set(new ChromeDriver(chromeOptions));
                     break;
             }
