@@ -105,18 +105,7 @@
                             <checkBuildResult>false</checkBuildResult>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>report-edge</id>
-                        <phase>verify</phase>
-                        <goals><goal>generate</goal></goals>
-                        <configuration>
-                            <projectName>ENOCTA CASE - EDGE Raporu</projectName>
-                            <outputDirectory>${project.build.directory}/cucumber-report-edge</outputDirectory>
-                            <inputDirectory>${project.build.directory}</inputDirectory>
-                            <jsonFiles><param>**/cucumber-edge.json</param></jsonFiles>
-                            <checkBuildResult>false</checkBuildResult>
-                        </configuration>
-                    </execution>
+
                     <execution>
                         <id>report-all</id>
                         <phase>verify</phase>
