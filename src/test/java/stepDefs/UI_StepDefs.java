@@ -16,9 +16,9 @@ import static utils.ReusableMethods.*;
 
 public class UI_StepDefs extends BaseStep {
     
-    // State variables for verification
-    private static String expectedTitle = "";
-    private static String expectedPrice = "";
+    // State variables for verification (Thread-safe, non-static for parallel execution)
+    private String expectedTitle = "";
+    private String expectedPrice = "";
 
     @Given("user navigates to amazon")
     public void kullanici_amazon_anasayfasina_gider() {
@@ -139,13 +139,22 @@ public class UI_StepDefs extends BaseStep {
             waitForVisibility(productPage.otherSellersPanel, "Diger Saticilar Paneli");
             
             if(productPage.otherSellersList.size() > 0) {
-                WebElement firstOtherSellerAddBtn = productPage.otherSellersList.get(0).findElement(By.cssSelector("input[name='submit.addToCart']"));
+                WebElement firstSeller = productPage.otherSellersList.get(0);
+                try {
+                    String otherPrice = firstSeller.findElement(By.cssSelector(".a-price .a-offscreen")).getAttribute("textContent");
+                    expectedPrice = otherPrice.replaceAll("[^0-9,]", "");
+                } catch(Exception ignored) {}
+                
+                WebElement firstOtherSellerAddBtn = firstSeller.findElement(By.cssSelector("input[name='submit.addToCart']"));
                 clickWithJS(firstOtherSellerAddBtn, "Diger Satici Sepete Ekle Butonu");
             } else {
                 throw new Exception("No other sellers in list");
             }
         } catch (Exception e) {
              try {
+                 if (productPage.productPrices.size() > 0) {
+                     expectedPrice = productPage.productPrices.get(0).getAttribute("textContent").trim().replaceAll("[^0-9,]", "");
+                 }
                  clickWithJS(productPage.defaultAddToCartButton, "Varsayilan Sepete Ekle Butonu");
              } catch(Exception ex) {
                  Assert.fail("Sepete ekle butonu tiklanamadi.");

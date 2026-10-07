@@ -39,19 +39,37 @@ public class LoggerUtils {
             browser = Driver.getBrowserName().toUpperCase();
         }
 
-        String logEntry = String.format("[%s] [%s] [%s] [%s] - %s", timestamp, level, threadId, browser, message);
-        
-        // Print to console with color if INFO (ANSI escape code)
+        // Determine emoji
+        String emoji = "ℹ️";
+        if (level.equals("ERROR")) emoji = "❌";
+        else if (level.equals("SUCCESS")) emoji = "✅";
+
+        // Determine color
+        String color = "\u001B[36m"; // Default Cyan
         if (level.equals("ERROR")) {
-            System.err.println(logEntry);
+            color = "\u001B[31m"; // Red
+        } else if (browser.contains("CHROME")) {
+            color = "\u001B[33m"; // Yellow
+        } else if (browser.contains("FIREFOX")) {
+            color = "\u001B[35m"; // Purple
+        } else if (browser.contains("EDGE")) {
+            color = "\u001B[34m"; // Blue
         } else {
-            // Cyan color for console
-            System.out.println("\u001B[36m" + logEntry + "\u001B[0m");
+            color = "\u001B[32m"; // Green for API
         }
+
+        String logEntryConsole = String.format("%s[%s] [%s] [%s] [%s] - %s %s\u001B[0m", color, emoji, timestamp, threadId, browser, message, emoji);
+        String logEntryFile = String.format("[%s] [%s] [%s] [%s] - %s", timestamp, level, threadId, browser, message);
+        
+        System.out.println(logEntryConsole);
         
         // Write to file
         if (fileWriter != null) {
-            fileWriter.println(logEntry);
+            fileWriter.println(logEntryFile);
         }
+    }
+    
+    public static void success(String message) {
+        log("SUCCESS", message);
     }
 }

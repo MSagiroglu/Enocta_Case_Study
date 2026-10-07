@@ -13,16 +13,36 @@ public class Hooks {
     public void setUp(Scenario scenario) {
         String browser = Driver.getBrowserName() != null ? Driver.getBrowserName().toUpperCase() : "CHROME";
         scenario.log("TESTING ON BROWSER: " + browser);
+        utils.LoggerUtils.info("UI Testleri basliyor: " + browser + " tarayicisi baslatiliyor...");
         Driver.getDriver().manage().window().maximize();
         Driver.getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
 
     @After("@ui")
     public void tearDown(Scenario scenario) {
+        String browser = Driver.getBrowserName() != null ? Driver.getBrowserName().toUpperCase() : "CHROME";
         if (scenario.isFailed()) {
+            utils.LoggerUtils.error(browser + " tarayicisinda test HATA aldi! Ekran goruntusu aliniyor...");
             final byte[] screenshot = ((TakesScreenshot) Driver.getDriver()).getScreenshotAs(OutputType.BYTES);
             scenario.attach(screenshot, "image/png", scenario.getName());
+        } else {
+            utils.LoggerUtils.success(browser + " tarayicisinda test BASARIYLA sonuclandi.");
         }
+        utils.LoggerUtils.info(browser + " tarayicisi kapatiliyor...");
         Driver.closeDriver();
+    }
+    
+    @Before("@api")
+    public void setUpApi(Scenario scenario) {
+        utils.LoggerUtils.info("API Testleri basliyor: " + scenario.getName());
+    }
+    
+    @After("@api")
+    public void tearDownApi(Scenario scenario) {
+        if (scenario.isFailed()) {
+            utils.LoggerUtils.error("API Testi HATA aldi: " + scenario.getName());
+        } else {
+            utils.LoggerUtils.success("API Testleri BASARIYLA sonuclandi: " + scenario.getName());
+        }
     }
 }
