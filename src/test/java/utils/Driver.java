@@ -8,6 +8,8 @@ import java.net.URL;
 import java.time.Duration;
 
 import org.openqa.selenium.edge.EdgeDriver;
+import java.util.Locale;
+import java.util.Collections;
 
 public class Driver {
     private static ThreadLocal<WebDriver> driverPool = new ThreadLocal<>();

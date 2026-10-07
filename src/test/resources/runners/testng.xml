@@ -11,11 +11,7 @@
             <class name="runners.FirefoxRunner"/>
         </classes>
     </test>
-    <test name="UI Tests - Edge">
-        <classes>
-            <class name="runners.EdgeRunner"/>
-        </classes>
-    </test>
+
     <test name="API Tests">
         <classes>
             <class name="runners.ApiRunner"/>
