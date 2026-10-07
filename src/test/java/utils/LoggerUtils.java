@@ -28,6 +28,10 @@ public class LoggerUtils {
     public static void error(String message) {
         log("ERROR", message);
     }
+    
+    public static void warning(String message) {
+        log("WARNING", message);
+    }
 
     private static final java.util.concurrent.ConcurrentHashMap<Long, Integer> threadMap = new java.util.concurrent.ConcurrentHashMap<>();
     private static final java.util.concurrent.atomic.AtomicInteger threadCounter = new java.util.concurrent.atomic.AtomicInteger(1);

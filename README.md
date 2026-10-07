@@ -84,6 +84,8 @@ Projede Allure Report entegrasyonu mevcuttur. Testlerin tam olarak paralel çal�
 ```bash
 mvn allure:serve
 ```
+*(ÖNEMLİ: Eğer `target/allure-results not found` hatası alırsanız, bu raporların henüz oluşmadığı anlamına gelir. Öncelikle `mvn clean verify` komutuyla testleri bir kez çalıştırıp bitmesini beklemeniz, ardından `mvn allure:serve` komutunu çalıştırmanız gerekmektedir.)*
+
 Bu komut arka planda bir web sunucusu başlatır ve muazzam detaylı Allure raporunu varsayılan tarayıcınızda otomatik olarak açar. (İncelemeniz bittiğinde terminalde `Ctrl + C` yaparak sunucuyu kapatabilirsiniz).
 
 > [!NOTE]

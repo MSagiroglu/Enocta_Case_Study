@@ -28,6 +28,30 @@ public class ReusableMethods {
         }
     }
 
+    public static void waitForAndClick(WebDriver driver, By by, String elementName, int timeout) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
+            wait.until(ExpectedConditions.elementToBeClickable(by)).click();
+            LoggerUtils.info("'" + elementName + "' elementine tiklandi.");
+        } catch (Exception e) {
+            LoggerUtils.info("Uyari: '" + elementName + "' elementine tiklanamadi: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public static void waitForElementAndSendKeys(WebDriver driver, By by, String text, String elementName) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT));
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+            element.clear();
+            element.sendKeys(text);
+            LoggerUtils.info("'" + elementName + "' alanina '" + text + "' degeri girildi.");
+        } catch (Exception e) {
+            LoggerUtils.info("Uyari: '" + elementName + "' alanina deger girilemedi: " + e.getMessage());
+            throw e;
+        }
+    }
+
     public static void clickWithJS(WebElement element, String elementName) {
         try {
             JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
