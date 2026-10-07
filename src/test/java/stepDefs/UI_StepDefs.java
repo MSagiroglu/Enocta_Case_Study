@@ -46,11 +46,20 @@ public class UI_StepDefs extends BaseStep {
     public void kullanici_fiyat_filtresi_uygular(String min, String max) {
         info("Fiyat filtresi uygulaniyor: " + min + " TL ile " + max + " TL arasi.");
         try {
-            sendKeys(searchPage.minPriceInput, min, "Minimum Fiyat");
-            sendKeys(searchPage.maxPriceInput, max, "Maksimum Fiyat");
-            clickWithJS(searchPage.goButton, "Fiyat Git Butonu");
-            waitForUrlContains("p_36");
+            Driver.getDriver().manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(1));
+            boolean hasFilter = Driver.getDriver().findElements(By.id("low-price")).size() > 0;
+            Driver.getDriver().manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(10));
+            
+            if (hasFilter) {
+                sendKeys(searchPage.minPriceInput, min, "Minimum Fiyat");
+                sendKeys(searchPage.maxPriceInput, max, "Maksimum Fiyat");
+                clickWithJS(searchPage.goButton, "Fiyat Git Butonu");
+                waitForUrlContains("p_36");
+            } else {
+                throw new Exception("Fiyat kutulari bulunamadi");
+            }
         } catch (Exception e) {
+            info("Uyari: Fiyat kutulari DOM'da bulunamadi, URL manipule ediliyor...");
             String url = Driver.getDriver().getCurrentUrl();
             String separator = url.contains("?") ? "&" : "?";
             Driver.getDriver().get(url + separator + "rh=p_36%3A" + min + "00-" + max + "00");
@@ -134,22 +143,31 @@ public class UI_StepDefs extends BaseStep {
         info("Urun sepete ekleniyor.");
         
         try {
-            clickWithJS(productPage.otherSellersLink, "Diger Saticilar Linki");
-            waitForVisibility(productPage.otherSellersPanel, "Diger Saticilar Paneli");
+            Driver.getDriver().manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(1));
+            boolean hasOtherSellers = Driver.getDriver().findElements(By.xpath("//a[contains(@title, 'diğer satıcı')] | //a[contains(text(), 'Yeni ve İkinci El')] | //a[contains(text(), 'diğer seçenek')] | //a[contains(@title, 'Daha Fazla')] | //a[contains(@href, 'offer-listing')]")).size() > 0;
+            Driver.getDriver().manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(10));
             
-            if(productPage.otherSellersList.size() > 0) {
-                WebElement firstSeller = productPage.otherSellersList.get(0);
-                try {
-                    String otherPrice = firstSeller.findElement(By.cssSelector(".a-price .a-offscreen")).getAttribute("textContent");
-                    expectedPrice = otherPrice.replaceAll("[^0-9,]", "");
-                } catch(Exception ignored) {}
+            if (hasOtherSellers) {
+                clickWithJS(productPage.otherSellersLink, "Diger Saticilar Linki");
+                waitForVisibility(productPage.otherSellersPanel, "Diger Saticilar Paneli");
                 
-                WebElement firstOtherSellerAddBtn = firstSeller.findElement(By.cssSelector("input[name='submit.addToCart']"));
-                clickWithJS(firstOtherSellerAddBtn, "Diger Satici Sepete Ekle Butonu");
+                if(productPage.otherSellersList.size() > 0) {
+                    WebElement firstSeller = productPage.otherSellersList.get(0);
+                    try {
+                        String otherPrice = firstSeller.findElement(By.cssSelector(".a-price .a-offscreen")).getAttribute("textContent");
+                        expectedPrice = otherPrice.replaceAll("[^0-9,]", "");
+                    } catch(Exception ignored) {}
+                    
+                    WebElement firstOtherSellerAddBtn = firstSeller.findElement(By.cssSelector("input[name='submit.addToCart']"));
+                    clickWithJS(firstOtherSellerAddBtn, "Diger Satici Sepete Ekle Butonu");
+                } else {
+                    throw new Exception("No other sellers in list");
+                }
             } else {
-                throw new Exception("No other sellers in list");
+                throw new Exception("Diger saticilar linki yok");
             }
         } catch (Exception e) {
+             info("Uyari: Diger saticilar bulunamadi veya butona tiklanamadi, varsayilan buton kullaniliyor...");
              try {
                  if (productPage.productPrices.size() > 0) {
                      expectedPrice = productPage.productPrices.get(0).getAttribute("textContent").trim().replaceAll("[^0-9,]", "");
