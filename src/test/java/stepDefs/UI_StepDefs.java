@@ -17,6 +17,9 @@ import utils.LoggerUtils;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.time.Duration;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class UI_StepDefs {
 
@@ -53,8 +56,8 @@ public class UI_StepDefs {
         LoggerUtils.info("Fiyat araligi filtresi dogrudan URL uzerinden uygulaniyor: " + min + " - " + max + " TL");
         
         // Arama butonuna basildiktan sonra sayfanin yuklenmesini bekle (URL degismeli)
-        org.openqa.selenium.support.ui.WebDriverWait wait = new org.openqa.selenium.support.ui.WebDriverWait(Driver.getDriver(), java.time.Duration.ofSeconds(10));
-        wait.until(org.openqa.selenium.support.ui.ExpectedConditions.urlContains("k="));
+        WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.urlContains("k="));
 
         String currentUrl = Driver.getDriver().getCurrentUrl();
         String separator = currentUrl.contains("?") ? "&" : "?";
