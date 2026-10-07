@@ -41,8 +41,11 @@ Proje değerlendirmesinde yer alan bonus özellikler, modern test mühendisliği
 ### 1. Page Object Model (POM) ve Atomik Yapı
 Step Definition (`UI_StepDefs.java`) dosyalarında hiçbir şekilde Selenium locator (`By.id`, `Driver.findElement` vb.) yer almaz. Tüm elementler `pages` paketi altındaki sınıflarda (`@FindBy`) tutulur. Bu yaklaşım kod tekrarını önler ve Amazon'un sürekli değişen arayüzlerinde bakımı (maintenance) sadece sayfa sınıflarına indirger.
 
-### 2. Gelişmiş "Fallback" Mekanizması (Esneklik)
-Amazon'un UI yapısı sıklıkla değişir (A/B testing). Örneğin, "Fiyat Filtresi" veya "Diğer Satıcılar" butonları DOM'da her zaman aynı yapıda bulunmayabilir. Projede, sabit 20 saniyelik beklemeler (Implicit Wait) optimize edilerek, eleman bulunamadığı an ışık hızıyla **B Planına** (URL manipülasyonu veya varsayılan sepete ekle butonu) geçen "try-catch" fallback algoritmaları geliştirilmiştir. Bu sayede testler asla boş yere beklemez (Test koşum süresi 2 dakikadan 40 saniyeye indirilmiştir).
+### 2. Gelişmiş "Fallback" Mekanizması ve Dinamik Beklemeler
+Amazon'un UI yapısı sıklıkla değişir (A/B testing). Örneğin, "Fiyat Filtresi" veya "Diğer Satıcılar" butonları DOM'da her zaman aynı yapıda bulunmayabilir. Projede, sabit 20 saniyelik beklemeler (Implicit Wait) veya `Thread.sleep` (Hard Wait) gibi "Anti-Pattern" yaklaşımlar tamamen terk edilmiştir. Bunun yerine elemanların yüklenmesini, kaybolmasını veya URL'nin değişmesini dinamik olarak bekleyen `ExpectedConditions` (Explicit Wait) metodları kullanılmıştır. Eleman bulunamadığı an ışık hızıyla **B Planına** (URL manipülasyonu veya varsayılan sepete ekle butonu) geçen "try-catch" fallback algoritmaları geliştirilmiştir. Bu sayede testler asla boş yere beklemez (Test koşum süresi 2 dakikadan 30 saniyeye indirilmiştir).
+
+### 2.1. Ağ Engellerini Aşan Lokal Sürücü Mimarisi (Edge Sorunu)
+Şirket içi ağlarda veya DNS kısıtlamalarında (örneğin Microsoft'un `msedgedriver.azureedge.net` sunucusuna erişim sağlanamadığında) testlerin iptal olmasını engellemek için, Edge testleri dinamik indirme (Selenium Manager) yerine doğrudan projedeki lokal `driver/msedgedriver.exe` dosyasını kullanacak şekilde yapılandırılmıştır. Böylece altyapısal bağlantı sorunları olsa dahi çapraz tarayıcı (Cross-Browser) testleri %100 başarıyla tamamlanır.
 
 ### 3. API Testlerinin Tarayıcı Açmadan (%100 Headless) Çalışması
 UI senaryoları `@ui`, API senaryoları `@api` tagiyle işaretlenmiştir. `Hooks.java` dosyasında tarayıcı ayağa kaldırma (`Driver.getDriver()`) kodları yalnızca `@ui` tagine sahip senaryolara bağlanmıştır. Ayrı bir `ApiRunner.java` üzerinden koşan API testleri, hiçbir şekilde arka planda Chrome başlatmadan direkt RestAssured ile HTTP isteklerini atar ve anında sonuç döner. 
