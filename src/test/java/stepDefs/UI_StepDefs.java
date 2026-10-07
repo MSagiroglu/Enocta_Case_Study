@@ -76,9 +76,50 @@ public class UI_StepDefs {
             List<WebElement> products = searchPage.productList;
 
             if (products.size() > 0) {
+                // Sadece telefon olanlari filtrele (aksesuarlari cikar)
+                java.util.List<WebElement> phoneProducts = new java.util.ArrayList<>();
+                for (WebElement product : products) {
+                    try {
+                        String text = product.getText().toLowerCase();
+                        
+                        // Aksesuar kelimelerini kontrol et
+                        boolean isAccessory = text.contains("kılıf") || text.contains("case") || 
+                                              text.contains("koruyucu") || text.contains("şarj") || 
+                                              text.contains("kablo") || text.contains("tutucu") || 
+                                              text.contains("çanta") || text.contains("cüzdan") ||
+                                              text.contains("kordon") || text.contains("lens") ||
+                                              text.contains("kapak") || text.contains("cover") ||
+                                              text.contains("adaptör") || text.contains("teleskop");
+
+                        // Telefon marka/model kelimeleri (SADECE MARKALAR, 'telefon' kelimesi cok genel)
+                        boolean isPhoneBrand = text.contains("iphone") || text.contains("samsung") || 
+                                               text.contains("xiaomi") || text.contains("redmi") || 
+                                               text.contains("poco") || text.contains("vivo") || 
+                                               text.contains("oppo") || text.contains("honor") || 
+                                               text.contains("realme") || text.contains("tecno") ||
+                                               text.contains("galaxy") || text.contains("apple") ||
+                                               text.contains("huawei") || text.contains("motorola") ||
+                                               text.contains("nothing") || text.contains("infinix") ||
+                                               text.contains("general mobile") || text.contains("casper") ||
+                                               text.contains("omix") || text.contains("reeder") ||
+                                               text.contains("tcl");
+
+                        // Aksesuar degilse ve bir telefon markasi tasiyorsa
+                        if (!isAccessory && isPhoneBrand) {
+                            phoneProducts.add(product);
+                        }
+                    } catch (Exception ignored) {}
+                }
+
+                // Eger filtrelenmis liste bossa fallback olarak son satirdan herhangi birini al
+                if (phoneProducts.isEmpty()) {
+                    LoggerUtils.warning("Telefon filtresine uygun urun bulunamadi, tum liste kullanilacak.");
+                    phoneProducts = products;
+                }
+
                 // Determine last row products (approx. last 1 to 4 products)
-                int lastRowCount = Math.min(products.size(), 4);
-                List<WebElement> lastProducts = products.subList(products.size() - lastRowCount, products.size());
+                int lastRowCount = Math.min(phoneProducts.size(), 4);
+                List<WebElement> lastProducts = phoneProducts.subList(phoneProducts.size() - lastRowCount, phoneProducts.size());
 
                 // Select a random product from the last row
                 int randomIndex = ThreadLocalRandom.current().nextInt(lastProducts.size());
