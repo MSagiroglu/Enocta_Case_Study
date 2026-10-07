@@ -33,18 +33,31 @@ public class Driver {
                     } catch (Exception e) { e.printStackTrace(); }
                     break;
                 case "firefox":
-                    driverPool.set(new FirefoxDriver());
+                    org.openqa.selenium.firefox.FirefoxOptions firefoxOptions = new org.openqa.selenium.firefox.FirefoxOptions();
+                    firefoxOptions.addPreference("dom.webdriver.enabled", false);
+                    firefoxOptions.addArguments("--disable-blink-features=AutomationControlled");
+                    firefoxOptions.addArguments("-private");
+                    driverPool.set(new FirefoxDriver(firefoxOptions));
                     break;
                 case "edge":
-                    driverPool.set(new EdgeDriver());
+                    org.openqa.selenium.edge.EdgeOptions edgeOptions = new org.openqa.selenium.edge.EdgeOptions();
+                    edgeOptions.addArguments("--remote-allow-origins=*");
+                    edgeOptions.addArguments("--disable-blink-features=AutomationControlled");
+                    edgeOptions.addArguments("-inprivate");
+                    edgeOptions.setExperimentalOption("excludeSwitches", java.util.Collections.singletonList("enable-automation"));
+                    driverPool.set(new EdgeDriver(edgeOptions));
                     break;
                 case "chrome":
                 default:
                     ChromeOptions chromeOptions = new ChromeOptions();
                     chromeOptions.addArguments("--remote-allow-origins=*");
+                    chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
+                    chromeOptions.addArguments("--incognito");
+                    chromeOptions.setExperimentalOption("excludeSwitches", java.util.Collections.singletonList("enable-automation"));
                     driverPool.set(new ChromeDriver(chromeOptions));
                     break;
             }
+            driverPool.get().manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
         }
         return driverPool.get();
     }

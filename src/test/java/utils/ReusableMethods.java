@@ -11,7 +11,7 @@ import java.util.List;
 public class ReusableMethods {
 
     // Varsayilan bekleme suresi
-    private static final int DEFAULT_TIMEOUT = 15;
+    private static final int DEFAULT_TIMEOUT = 20;
 
     public static void click(WebElement element, String elementName) {
         try {
