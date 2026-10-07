@@ -5,16 +5,11 @@ import org.testng.annotations.BeforeTest;
 import utils.Driver;
 
 @CucumberOptions(
-    tags = "@ui",
+    tags = "@api",
     features = "src/test/resources/features",
     glue = {"stepDefs", "hooks"},
-    plugin = {"json:target/cucumber-chrome.json", "html:target/cucumber-chrome.html", "rerun:target/failed_scenarios_chrome.txt"}
+    plugin = {"json:target/cucumber-api.json", "html:target/cucumber-api.html", "rerun:target/failed_scenarios_api.txt"}
 )
-public class ChromeRunner extends AbstractTestNGCucumberTests {
+public class ApiRunner extends AbstractTestNGCucumberTests {
     static { MockServerManager.startServer(); }
-
-    @BeforeTest
-    public void setupBrowser() {
-        Driver.setBrowser("chrome");
-    }
 }

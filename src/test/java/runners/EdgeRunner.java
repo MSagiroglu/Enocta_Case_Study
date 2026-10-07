@@ -5,7 +5,7 @@ import org.testng.annotations.BeforeTest;
 import utils.Driver;
 
 @CucumberOptions(
-    tags = "@all",
+    tags = "@ui",
     features = "src/test/resources/features",
     glue = {"stepDefs", "hooks"},
     plugin = {"json:target/cucumber-edge.json", "html:target/cucumber-edge.html", "rerun:target/failed_scenarios_edge.txt"}

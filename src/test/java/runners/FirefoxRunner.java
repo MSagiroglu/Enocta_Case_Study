@@ -5,7 +5,7 @@ import org.testng.annotations.BeforeTest;
 import utils.Driver;
 
 @CucumberOptions(
-    tags = "@all",
+    tags = "@ui",
     features = "src/test/resources/features",
     glue = {"stepDefs", "hooks"},
     plugin = {"json:target/cucumber-firefox.json", "html:target/cucumber-firefox.html", "rerun:target/failed_scenarios_firefox.txt"}
