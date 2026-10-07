@@ -86,6 +86,23 @@ mvn allure:serve
 ```
 Bu komut arka planda bir web sunucusu başlatır ve muazzam detaylı Allure raporunu varsayılan tarayıcınızda otomatik olarak açar. (İncelemeniz bittiğinde terminalde `Ctrl + C` yaparak sunucuyu kapatabilirsiniz).
 
+> [!NOTE]
+> `target/site/allure-maven-plugin/index.html` dosyasına çift tıklayarak açarsanız rapor sonsuz "Loading..." ekranında kalır. Bu bir hata değildir; tarayıcılar güvenlik gereği (CORS) `file://` üzerinden JSON okumaya izin vermez. Raporu her zaman `mvn allure:serve` ile (yerel web sunucusu üzerinden) açın.
+
+---
+
+## ☁️ CI/CD – GitHub Actions & Canlı Allure Raporu
+
+`.github/workflows/test-execution.yml` dosyası; her `push`'ta, her gece 00:00'da (cron) ve elle tetiklendiğinde (`workflow_dispatch`) çalışır:
+
+1. Ubuntu sunucusunda JDK 17 ve Node.js kurulur, mock server bağımlılıkları yüklenir.
+2. `mvn clean verify` ile API + Chrome/Firefox/Edge testleri paralel koşar. GitHub Actions `CI=true` değişkenini set ettiği için `Driver.java` tarayıcıları otomatik olarak **headless** modda açar.
+3. `mvn allure:report` ile Allure raporu üretilir.
+4. Masterthought raporları, Allure raporu ve loglar **Artifacts** olarak indirilebilir hale gelir.
+5. Allure raporu **GitHub Pages**'e yayınlanır → `https://<kullanici-adi>.github.io/<repo-adi>/` adresinden kurulum gerektirmeden canlı incelenebilir.
+
+**Tek seferlik ayar:** Repo → *Settings* → *Pages* → *Build and deployment* → *Source* = **GitHub Actions** seçilmelidir.
+
 ---
 
 **Not:** Hata anında (Assertion Failure vs.) alınan ekran görüntüleri hem Masterthought raporlarına hem de Allure raporuna otomatik olarak "Attachment" (ek) şeklinde yapıştırılır.

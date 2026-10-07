@@ -4,80 +4,86 @@ on:
   push:
     branches: [ "master", "main" ]
   schedule:
-    - cron: '0 0 * * *' # Every day at midnight UTC
-  workflow_dispatch: # Allows manual trigger
+    - cron: '0 0 * * *' # Her gece 00:00 (UTC)
+  workflow_dispatch: # Elle tetikleme
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      selenium-hub:
-        image: selenium/hub:4.16.1
-        ports:
-          - 4444:4444
-      chrome:
-        image: selenium/node-chrome:4.16.1
-        shm-size: 2gb
-        env:
-          SE_EVENT_BUS_HOST: selenium-hub
-          SE_EVENT_BUS_PUBLISH_PORT: 4442
-          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-      firefox:
-        image: selenium/node-firefox:4.16.1
-        shm-size: 2gb
-        env:
-          SE_EVENT_BUS_HOST: selenium-hub
-          SE_EVENT_BUS_PUBLISH_PORT: 4442
-          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-      edge:
-        image: selenium/node-edge:4.16.1
-        shm-size: 2gb
-        env:
-          SE_EVENT_BUS_HOST: selenium-hub
-          SE_EVENT_BUS_PUBLISH_PORT: 4442
-          SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
-
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
 
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
 
-    - name: Start Mock Server
-      run: |
-        cd mock-server
-        npm install
-        node server.js &
-        sleep 5
-      
-    - name: Run Maven Tests
-      env:
-        BROWSER: remote-chrome # Default fallback, TestNG handles parallel cross browser
-        HUB_URL: http://localhost:4444/wd/hub
-        MOCK_SERVER_URL: http://localhost:3000
+    # Mock server'i MockServerManager otomatik baslatir, sadece bagimliliklar kurulur
+    - name: Install Mock Server dependencies
+      run: npm install --prefix mock-server
+
+    # ubuntu-latest uzerinde Chrome, Firefox ve Edge kurulu gelir.
+    # GitHub Actions CI=true set eder -> Driver.java tarayicilari headless acar.
+    - name: Run Tests (API + Chrome/Firefox/Edge paralel)
       run: mvn clean verify
 
-    - name: Upload Cucumber Reports
+    - name: Generate Allure Report
       if: always()
-      uses: actions/upload-artifact@v3
+      run: mvn allure:report
+
+    - name: Upload Cucumber (Masterthought) Reports
+      if: always()
+      uses: actions/upload-artifact@v4
       with:
-        name: unified-cucumber-report
-        path: target/cucumber-html-reports/
-        
+        name: cucumber-reports
+        path: target/cucumber-report-*/
+
+    - name: Upload Allure Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report
+        path: target/site/allure-maven-plugin/
+
     - name: Upload Test Logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-logs
         path: target/logs/
+
+    - name: Prepare GitHub Pages
+      if: always()
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: target/site/allure-maven-plugin/
+
+  deploy-report:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Allure Report to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
