@@ -10,7 +10,9 @@ import java.time.Duration;
 public class Hooks {
     
     @Before("@ui")
-    public void setUp() {
+    public void setUp(Scenario scenario) {
+        String browser = Driver.getBrowserName() != null ? Driver.getBrowserName().toUpperCase() : "CHROME";
+        scenario.log("TESTING ON BROWSER: " + browser);
         Driver.getDriver().manage().window().maximize();
         Driver.getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }

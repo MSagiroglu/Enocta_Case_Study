@@ -3,7 +3,7 @@ import io.cucumber.java.en.*;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import utils.ConfigReader;
-import static utils.*;
+import static utils.LoggerUtils.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
