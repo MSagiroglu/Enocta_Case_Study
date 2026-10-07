@@ -77,18 +77,38 @@
                 <version>5.8.1</version>
                 <executions>
                     <execution>
-                        <id>execution</id>
+                        <id>report-chrome</id>
                         <phase>verify</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
+                        <goals><goal>generate</goal></goals>
                         <configuration>
-                            <projectName>ENOCTA Automation Case</projectName>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <projectName>ENOCTA CASE - CHROME Raporu</projectName>
+                            <outputDirectory>${project.build.directory}/cucumber-report-chrome</outputDirectory>
                             <inputDirectory>${project.build.directory}</inputDirectory>
-                            <jsonFiles>
-                                <param>**/cucumber-*.json</param>
-                            </jsonFiles>
+                            <jsonFiles><param>**/cucumber-chrome.json</param></jsonFiles>
+                            <checkBuildResult>false</checkBuildResult>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report-firefox</id>
+                        <phase>verify</phase>
+                        <goals><goal>generate</goal></goals>
+                        <configuration>
+                            <projectName>ENOCTA CASE - FIREFOX Raporu</projectName>
+                            <outputDirectory>${project.build.directory}/cucumber-report-firefox</outputDirectory>
+                            <inputDirectory>${project.build.directory}</inputDirectory>
+                            <jsonFiles><param>**/cucumber-firefox.json</param></jsonFiles>
+                            <checkBuildResult>false</checkBuildResult>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report-edge</id>
+                        <phase>verify</phase>
+                        <goals><goal>generate</goal></goals>
+                        <configuration>
+                            <projectName>ENOCTA CASE - EDGE Raporu</projectName>
+                            <outputDirectory>${project.build.directory}/cucumber-report-edge</outputDirectory>
+                            <inputDirectory>${project.build.directory}</inputDirectory>
+                            <jsonFiles><param>**/cucumber-edge.json</param></jsonFiles>
                             <checkBuildResult>false</checkBuildResult>
                         </configuration>
                     </execution>

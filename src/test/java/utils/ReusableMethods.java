@@ -1,4 +1,4 @@
-package utils;
+﻿package utils;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -23,7 +23,7 @@ public class ReusableMethods {
             getWait().until(ExpectedConditions.elementToBeClickable(element)).click();
             LoggerUtils.info("'" + elementName + "' elementine tiklandi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + elementName + "' elementine tiklanamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + elementName + "' elementine tiklanamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -34,7 +34,7 @@ public class ReusableMethods {
             js.executeScript("arguments[0].click();", element);
             LoggerUtils.info("'" + elementName + "' elementine JS ile tiklandi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + elementName + "' elementine JS ile tiklanamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + elementName + "' elementine JS ile tiklanamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -46,7 +46,7 @@ public class ReusableMethods {
             visibleElement.sendKeys(text);
             LoggerUtils.info("'" + elementName + "' alanina '" + text + "' degeri girildi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + elementName + "' alanina deger girilemedi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + elementName + "' alanina deger girilemedi: " + e.getMessage());
             throw e;
         }
     }
@@ -57,7 +57,7 @@ public class ReusableMethods {
             LoggerUtils.info("'" + elementName + "' elementinin metni okundu: " + text);
             return text;
         } catch (Exception e) {
-            LoggerUtils.error("'" + elementName + "' elementinin metni okunamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + elementName + "' elementinin metni okunamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -74,7 +74,7 @@ public class ReusableMethods {
             getWait().until(ExpectedConditions.visibilityOf(element));
             LoggerUtils.info("'" + elementName + "' elementinin gorunur olmasi beklendi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + elementName + "' elementi gorunur olmadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + elementName + "' elementi gorunur olmadi: " + e.getMessage());
             throw e;
         }
     }
@@ -84,7 +84,7 @@ public class ReusableMethods {
             getWait().until(ExpectedConditions.visibilityOfAllElements(elements));
             LoggerUtils.info("'" + listName + "' listesindeki elementlerin gorunur olmasi beklendi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + listName + "' listesi gorunur olmadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + listName + "' listesi gorunur olmadi: " + e.getMessage());
             throw e;
         }
     }
@@ -103,7 +103,7 @@ public class ReusableMethods {
             getWait().until(ExpectedConditions.urlContains(text));
             LoggerUtils.info("URL'nin '" + text + "' metnini icermesi beklendi (Explicit Wait).");
         } catch (Exception e) {
-            LoggerUtils.error("URL '" + text + "' metnini icermedi: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + "URL '" + text + "' metnini icermedi: " + e.getMessage());
             throw e;
         }
     }
@@ -113,7 +113,7 @@ public class ReusableMethods {
             getWait().until(driver -> ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
             LoggerUtils.info("Sayfanin DOM yapisinin tamamen yuklenmesi (readyState=complete) beklendi.");
         } catch (Exception e) {
-            LoggerUtils.error("Sayfa tam anlamiyla yuklenemedi: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + "Sayfa tam anlamiyla yuklenemedi: " + e.getMessage());
             throw e;
         }
     }
@@ -127,7 +127,7 @@ public class ReusableMethods {
             select.selectByVisibleText(text);
             LoggerUtils.info("'" + dropdownName + "' dropdown'undan '" + text + "' secildi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + dropdownName + "' dropdown'undan secim yapilamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + dropdownName + "' dropdown'undan secim yapilamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -138,7 +138,7 @@ public class ReusableMethods {
             select.selectByIndex(index);
             LoggerUtils.info("'" + dropdownName + "' dropdown'undan " + index + ". index secildi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + dropdownName + "' dropdown'undan secim yapilamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + dropdownName + "' dropdown'undan secim yapilamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -149,7 +149,7 @@ public class ReusableMethods {
             select.selectByValue(value);
             LoggerUtils.info("'" + dropdownName + "' dropdown'undan '" + value + "' degeri secildi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + dropdownName + "' dropdown'undan secim yapilamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + dropdownName + "' dropdown'undan secim yapilamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -163,7 +163,7 @@ public class ReusableMethods {
             Driver.getDriver().switchTo().alert().accept();
             LoggerUtils.info("Alert (Uyari) kabul edildi.");
         } catch (Exception e) {
-            LoggerUtils.error("Alert kabul edilemedi: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + "Alert kabul edilemedi: " + e.getMessage());
             throw e;
         }
     }
@@ -174,7 +174,7 @@ public class ReusableMethods {
             Driver.getDriver().switchTo().alert().dismiss();
             LoggerUtils.info("Alert (Uyari) reddedildi.");
         } catch (Exception e) {
-            LoggerUtils.error("Alert reddedilemedi: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + "Alert reddedilemedi: " + e.getMessage());
             throw e;
         }
     }
@@ -186,7 +186,7 @@ public class ReusableMethods {
             LoggerUtils.info("Alert metni okundu: " + text);
             return text;
         } catch (Exception e) {
-            LoggerUtils.error("Alert metni okunamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + "Alert metni okunamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -199,7 +199,7 @@ public class ReusableMethods {
             getWait().until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(index));
             LoggerUtils.info(index + ". indexli iframe'e gecis yapildi.");
         } catch (Exception e) {
-            LoggerUtils.error(index + ". indexli iframe'e gecis yapilamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + index + ". indexli iframe'e gecis yapilamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -209,7 +209,7 @@ public class ReusableMethods {
             getWait().until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(iframeElement));
             LoggerUtils.info("'" + iframeName + "' iframe'ine gecis yapildi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + iframeName + "' iframe'ine gecis yapilamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + iframeName + "' iframe'ine gecis yapilamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -219,7 +219,7 @@ public class ReusableMethods {
             Driver.getDriver().switchTo().defaultContent();
             LoggerUtils.info("Ana sayfa icerigine (Default Content) geri donuldu.");
         } catch (Exception e) {
-            LoggerUtils.error("Ana sayfaya geri donulemedi: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + "Ana sayfaya geri donulemedi: " + e.getMessage());
             throw e;
         }
     }
@@ -239,7 +239,7 @@ public class ReusableMethods {
             }
             throw new Exception("Belirtilen basliga sahip pencere bulunamadi.");
         } catch (Exception e) {
-            LoggerUtils.error("Pencere gecisi basarisiz: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + "Pencere gecisi basarisiz: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -250,7 +250,7 @@ public class ReusableMethods {
             Driver.getDriver().switchTo().window(windowHandles.get(index));
             LoggerUtils.info(index + ". siradaki sekmeye/pencereye gecildi.");
         } catch (Exception e) {
-            LoggerUtils.error(index + ". siradaki sekmeye/pencereye gecilemedi: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + index + ". siradaki sekmeye/pencereye gecilemedi: " + e.getMessage());
             throw e;
         }
     }
@@ -264,7 +264,7 @@ public class ReusableMethods {
             js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'});", element);
             LoggerUtils.info("Ekranda '" + elementName + "' elementine kaydirildi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + elementName + "' elementine kaydirilamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + elementName + "' elementine kaydirilamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -275,7 +275,7 @@ public class ReusableMethods {
             js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
             LoggerUtils.info("Sayfanin en altina kaydirildi.");
         } catch (Exception e) {
-            LoggerUtils.error("Sayfanin altina kaydirma basarisiz: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + "Sayfanin altina kaydirma basarisiz: " + e.getMessage());
         }
     }
 
@@ -288,7 +288,7 @@ public class ReusableMethods {
             actions.moveToElement(element).perform();
             LoggerUtils.info("Fare '" + elementName + "' elementinin uzerine getirildi (Hover).");
         } catch (Exception e) {
-            LoggerUtils.error("'" + elementName + "' elementine hover yapilamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + elementName + "' elementine hover yapilamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -299,7 +299,7 @@ public class ReusableMethods {
             actions.dragAndDrop(source, target).perform();
             LoggerUtils.info("'" + sourceName + "' elementi '" + targetName + "' hedefine suruklendi.");
         } catch (Exception e) {
-            LoggerUtils.error("Surukle-Birak islemi basarisiz oldu: " + e.getMessage());
+            LoggerUtils.info("Uyari: " + "Surukle-Birak islemi basarisiz oldu: " + e.getMessage());
             throw e;
         }
     }
@@ -310,7 +310,7 @@ public class ReusableMethods {
             actions.doubleClick(element).perform();
             LoggerUtils.info("'" + elementName + "' elementine cift tiklandi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + elementName + "' elementine cift tiklanamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + elementName + "' elementine cift tiklanamadi: " + e.getMessage());
             throw e;
         }
     }
@@ -321,7 +321,7 @@ public class ReusableMethods {
             actions.contextClick(element).perform();
             LoggerUtils.info("'" + elementName + "' elementine sag tiklandi.");
         } catch (Exception e) {
-            LoggerUtils.error("'" + elementName + "' elementine sag tiklanamadi: " + e.getMessage());
+            LoggerUtils.info("Uyari: '" + elementName + "' elementine sag tiklanamadi: " + e.getMessage());
             throw e;
         }
     }
