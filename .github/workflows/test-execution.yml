@@ -95,3 +95,10 @@ jobs:
         id: deployment
         if: hashFiles('target/site/allure-maven-plugin/**') != ''
         uses: actions/deploy-pages@v4
+
+      - name: Print Allure Report URL
+        if: always() && steps.deployment.outputs.page_url != ''
+        run: |
+          echo "### Allure Report Deployed 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "Report URL: [${{ steps.deployment.outputs.page_url }}](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
+          echo "Allure Report deployed to: ${{ steps.deployment.outputs.page_url }}"

@@ -50,11 +50,28 @@ public class UI_StepDefs {
     @When("kullanici {string} aramasi yapar")
     public void kullanici_aramasi_yapar(String item) {
         LoggerUtils.info("Arama yapiliyor: " + item);
-        ReusableMethods.waitForElementAndSendKeys(Driver.getDriver(), By.id("twotabsearchtextbox"), item, "Arama Kutusu");
+        
+        boolean found = false;
+        int maxRetries = 3;
+        for (int i = 0; i < maxRetries; i++) {
+            try {
+                ReusableMethods.waitForElementAndSendKeys(Driver.getDriver(), By.id("twotabsearchtextbox"), item, "Arama Kutusu");
+                found = true;
+                break;
+            } catch (Exception e) {
+                LoggerUtils.warning("Arama kutusu bulunamadi (Captcha veya bot korumasi olabilir). Sayfa yenileniyor... Deneme: " + (i + 1));
+                Driver.getDriver().navigate().refresh();
+                try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
+                if (i == maxRetries - 1) {
+                    throw e;
+                }
+            }
+        }
+
         try {
             ReusableMethods.waitForAndClick(Driver.getDriver(), By.id("nav-search-submit-button"), "Arama Butonu", 10);
         } catch (Exception e) {
-            homePage.searchBox.sendKeys(Keys.ENTER);
+            Driver.getDriver().findElement(By.id("twotabsearchtextbox")).sendKeys(Keys.ENTER);
         }
     }
 
