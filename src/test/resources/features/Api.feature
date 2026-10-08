@@ -1,9 +1,9 @@
 @all @api
-Feature: API Mock Server Tests
+Feature: API Mock Server Testleri
   
-  Scenario: Test Token, View Invoice and Send Invoice
-    Given user gets a token from mock server
-    When user fetches invoice with barcode "12345"
-    Then the invoice response should be saved to file only if successful
-    When user sends invoice with barcode "12345"
-    Then the send invoice response should be saved to file only if successful
+  Scenario: Token Alma, Fatura Goruntuleme ve Gonderme Testi
+    Given kullanici mock server'dan token alir
+    When kullanici "12345" barkodlu faturayi sorgular
+    Then basarili fatura sorgusu yaniti dosyaya kaydedilir
+    When kullanici "12345" barkodlu faturayi gonderir
+    Then basarili fatura gonderme yaniti dosyaya kaydedilir

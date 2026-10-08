@@ -14,40 +14,40 @@ public class API_StepDefs {
     private String token;
     private Response lastResponse;
 
-    @Given("user gets a token from mock server")
-    public void user_gets_a_token_from_mock_server() {
+    @Given("kullanici mock server'dan token alir")
+    public void kullanici_mock_serverdan_token_alir() {
         RestAssured.baseURI = ConfigReader.getProperty("mock.server.url");
         Response response = given()
             .header("user", "testUser")
             .header("pass", "testPass")
             .post("/token");
         token = response.jsonPath().getString("token");
-        // Assert token is not empty
-        Assert.assertNotNull(token, "Token should not be empty");
-        Assert.assertFalse(token.isEmpty(), "Token should not be empty");
+        // Token'in bos olmadigini dogrula
+        Assert.assertNotNull(token, "Token bos olmamali");
+        Assert.assertFalse(token.isEmpty(), "Token bos olmamali");
     }
 
-    @When("user fetches invoice with barcode {string}")
-    public void user_fetches_invoice_with_barcode(String barcode) {
+    @When("kullanici {string} barkodlu faturayi sorgular")
+    public void kullanici_barkodlu_faturayi_sorgular(String barcode) {
         lastResponse = given()
             .queryParam("barcode", barcode)
             .get("/viewInvoice");
-        // Assert response successful
-        Assert.assertEquals(lastResponse.getStatusCode(), 200, "viewInvoice should return 200");
+        // Response'un basarili oldugunu (200) dogrula
+        Assert.assertEquals(lastResponse.getStatusCode(), 200, "viewInvoice 200 donmeli");
     }
 
-    @Then("the invoice response should be saved to file only if successful")
-    public void the_invoice_response_should_be_saved_to_file() throws IOException {
-        // Assert response was successful before saving
-        Assert.assertNotNull(lastResponse, "Last response should not be null");
-        Assert.assertTrue(lastResponse.getStatusCode() == 200, "viewInvoice must return 200 to save response");
-        Assert.assertNotNull(lastResponse.getBody(), "Response body should not be null");
+    @Then("basarili fatura sorgusu yaniti dosyaya kaydedilir")
+    public void basarili_fatura_sorgusu_yaniti_dosyaya_kaydedilir() throws IOException {
+        // Dosyaya yazmadan once response'un basarili oldugunu dogrula
+        Assert.assertNotNull(lastResponse, "Son response null olmamali");
+        Assert.assertTrue(lastResponse.getStatusCode() == 200, "Response kaydetmek icin viewInvoice 200 donmeli");
+        Assert.assertNotNull(lastResponse.getBody(), "Response body null olmamali");
 
-        // Verify response structure
+        // Response yapisini dogrula
         String invoiceLink = lastResponse.jsonPath().getString("InvoiceLink");
         boolean resultSuccess = lastResponse.jsonPath().getBoolean("Result.success");
-        Assert.assertNotNull(invoiceLink, "InvoiceLink should not be null");
-        Assert.assertTrue(resultSuccess, "Result.success should be true");
+        Assert.assertNotNull(invoiceLink, "InvoiceLink null olmamali");
+        Assert.assertTrue(resultSuccess, "Result.success true olmali");
 
         File dir = new File("target");
         if(!dir.exists()) dir.mkdir();
@@ -56,29 +56,29 @@ public class API_StepDefs {
         writer.close();
     }
 
-    @When("user sends invoice with barcode {string}")
-    public void user_sends_invoice_with_barcode(String barcode) {
+    @When("kullanici {string} barkodlu faturayi gonderir")
+    public void kullanici_barkodlu_faturayi_gonderir(String barcode) {
         lastResponse = given()
             .header("token", token)
             .header("Content-Type", "application/json")
             .body("{\"Barcode\": {\"barcode\": \"" + barcode + "\"}}")
             .post("/sendInvoice");
-        // Assert response code
-        Assert.assertNotNull(lastResponse, "Last response should not be null");
+        // Response'un bos donmedigini dogrula
+        Assert.assertNotNull(lastResponse, "Son response null olmamali");
     }
 
-    @Then("the send invoice response should be saved to file only if successful")
-    public void the_send_invoice_response_should_be_saved_to_file() throws IOException {
-        // Assert response was successful before saving
-        Assert.assertNotNull(lastResponse, "Last response should not be null");
-        Assert.assertTrue(lastResponse.getStatusCode() == 200, "sendInvoice should return 200");
-        Assert.assertNotNull(lastResponse.getBody(), "Response body should not be null");
+    @Then("basarili fatura gonderme yaniti dosyaya kaydedilir")
+    public void basarili_fatura_gonderme_yaniti_dosyaya_kaydedilir() throws IOException {
+        // Dosyaya yazmadan once response'un basarili oldugunu dogrula
+        Assert.assertNotNull(lastResponse, "Son response null olmamali");
+        Assert.assertTrue(lastResponse.getStatusCode() == 200, "sendInvoice 200 donmeli");
+        Assert.assertNotNull(lastResponse.getBody(), "Response body null olmamali");
 
-        // Verify response structure
+        // Response yapisini dogrula
         boolean success = lastResponse.jsonPath().getBoolean("success");
         String receivedBarcode = lastResponse.jsonPath().getString("receivedBarcode");
-        Assert.assertTrue(success, "sendInvoice success should be true");
-        Assert.assertNotNull(receivedBarcode, "receivedBarcode should not be null");
+        Assert.assertTrue(success, "sendInvoice success true olmali");
+        Assert.assertNotNull(receivedBarcode, "receivedBarcode null olmamali");
 
         FileWriter writer = new FileWriter("target/sendInvoice_response.json");
         writer.write(lastResponse.getBody().asString());

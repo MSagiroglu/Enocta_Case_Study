@@ -1,10 +1,11 @@
 @all @ui
-Feature: E-Commerce Product Purchase
+Feature: E-Ticaret Urun Satin Alma
   
-  Scenario: Search and Add to Cart from Lowest Rated Seller
-    Given user navigates to amazon
-    When user searches for "cep telefonu"
-    And user filters price between "15000" and "20000"
-    And user selects a random product from the last row
-    And user adds the product to the cart from the seller with the lowest rating
-    Then user verifies the product is in the cart
+  Scenario: Arama Yapma ve En Dusuk Puanli Saticidan Sepete Ekleme
+    Given kullanici amazon anasayfasina gider
+    When kullanici giris islemini yapar
+    And kullanici "cep telefonu" aramasi yapar
+    And kullanici fiyat araligini "15000" ve "20000" olarak belirler
+    And kullanici son satirdan rastgele bir urun secer
+    And kullanici urunu en dusuk puanli saticidan sepete ekler
+    Then kullanici urunun sepete eklendigini dogrular

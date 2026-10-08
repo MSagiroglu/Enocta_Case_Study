@@ -29,8 +29,8 @@ public class UI_StepDefs {
     ProductPage productPage = new ProductPage();
     CartPage cartPage = new CartPage();
 
-    @Given("user navigates to amazon")
-    public void user_navigates_to_amazon() {
+    @Given("kullanici amazon anasayfasina gider")
+    public void kullanici_amazon_anasayfasina_gider() {
         LoggerUtils.info("Amazon anasayfasi gidiliyor: https://www.amazon.com.tr");
         Driver.getDriver().get("https://www.amazon.com.tr");
         try {
@@ -41,8 +41,14 @@ public class UI_StepDefs {
         }
     }
 
-    @When("user searches for {string}")
-    public void user_searches_for(String item) {
+    @When("kullanici giris islemini yapar")
+    public void kullanici_giris_islemini_yapar() {
+        LoggerUtils.info("Güvenlik (Captcha vb.) önlemleri sebebiyle login adimi atlanmistir (Bypass).");
+        // Gerçek bir otomasyonda burada login işlemleri yapılır.
+    }
+
+    @When("kullanici {string} aramasi yapar")
+    public void kullanici_aramasi_yapar(String item) {
         LoggerUtils.info("Arama yapiliyor: " + item);
         ReusableMethods.waitForElementAndSendKeys(Driver.getDriver(), By.id("twotabsearchtextbox"), item, "Arama Kutusu");
         try {
@@ -52,8 +58,8 @@ public class UI_StepDefs {
         }
     }
 
-    @When("user filters price between {string} and {string}")
-    public void user_filters_price_between_and(String min, String max) {
+    @When("kullanici fiyat araligini {string} ve {string} olarak belirler")
+    public void kullanici_fiyat_araligini_ve_olarak_belirler(String min, String max) {
         LoggerUtils.info("Fiyat araligi filtresi dogrudan URL uzerinden uygulaniyor: " + min + " - " + max + " TL");
         
         // Arama butonuna basildiktan sonra sayfanin yuklenmesini bekle (URL degismeli)
@@ -75,8 +81,8 @@ public class UI_StepDefs {
         ));
     }
 
-    @When("user selects a random product from the last row")
-    public void user_selects_a_random_product_from_the_last_row() {
+    @When("kullanici son satirdan rastgele bir urun secer")
+    public void kullanici_son_satirdan_rastgele_bir_urun_secer() {
         LoggerUtils.info("Son satirdan rastgele urun seciliyor.");
         try {
             List<WebElement> products = searchPage.productList;
@@ -151,8 +157,8 @@ public class UI_StepDefs {
         }
     }
 
-    @When("user adds the product to the cart from the seller with the lowest rating")
-    public void user_adds_the_product_to_the_cart_from_the_seller_with_the_lowest_rating() {
+    @When("kullanici urunu en dusuk puanli saticidan sepete ekler")
+    public void kullanici_urunu_en_dusuk_puanli_saticidan_sepete_ekler() {
         LoggerUtils.info("Diger saticilar arasindan en dusuk puanli sepete ekleniyor.");
         WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
 
@@ -232,8 +238,8 @@ public class UI_StepDefs {
         }
     }
 
-    @Then("user verifies the product is in the cart")
-    public void user_verifies_the_product_is_in_the_cart() {
+    @Then("kullanici urunun sepete eklendigini dogrular")
+    public void kullanici_urunun_sepete_eklendigini_dogrular() {
         LoggerUtils.info("Sepete gidilip urun kontrol ediliyor.");
         try {
             // Hard wait yerine sepet sayacinin degismesini veya sepete eklendi mesajini bekle
