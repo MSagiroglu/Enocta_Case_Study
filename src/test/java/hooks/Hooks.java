@@ -23,10 +23,6 @@ public class Hooks {
         
         // Allure raporunda testleri tarayiciya gore ayirmak (farkli parametrelerle kosulmus gibi gostermek) icin
         io.qameta.allure.Allure.parameter("Browser", browser);
-        io.qameta.allure.Allure.getLifecycle().updateTestCase(testResult -> {
-            testResult.setName(testResult.getName() + " [" + browser + "]");
-            testResult.setHistoryId(testResult.getHistoryId() + browser);
-        });
         
         utils.LoggerUtils.info("UI Testleri basliyor: " + browser + " tarayicisi baslatiliyor...");
         Driver.getDriver().manage().window().maximize();
@@ -50,6 +46,19 @@ public class Hooks {
         } else {
             utils.LoggerUtils.success(browser + " tarayicisinda test BASARIYLA sonuclandi.");
         }
+        
+        // Ensure the updated name and historyId are not overwritten by targeting the TestCase UUID explicitly
+        io.qameta.allure.Allure.getLifecycle().getCurrentTestCase().ifPresent(uuid -> {
+            io.qameta.allure.Allure.getLifecycle().updateTestCase(uuid, testResult -> {
+                testResult.setName(testResult.getName() + " [" + browser + "]");
+                testResult.setHistoryId(testResult.getHistoryId() + "-" + browser);
+                
+                // Add parameter to the test case itself
+                io.qameta.allure.model.Parameter param = new io.qameta.allure.model.Parameter().setName("Browser").setValue(browser);
+                testResult.getParameters().add(param);
+            });
+        });
+        
         utils.LoggerUtils.info(browser + " tarayicisi kapatiliyor...");
         Driver.closeDriver();
     }
@@ -57,10 +66,6 @@ public class Hooks {
     @Before("@api")
     public void setUpApi(Scenario scenario) {
         io.qameta.allure.Allure.parameter("Type", "API Test");
-        io.qameta.allure.Allure.getLifecycle().updateTestCase(testResult -> {
-            testResult.setName(testResult.getName() + " [API]");
-            testResult.setHistoryId(testResult.getHistoryId() + "API");
-        });
         utils.LoggerUtils.info("API Testleri basliyor: " + scenario.getName());
     }
     
@@ -71,5 +76,15 @@ public class Hooks {
         } else {
             utils.LoggerUtils.success("API Testleri BASARIYLA sonuclandi: " + scenario.getName());
         }
+        
+        io.qameta.allure.Allure.getLifecycle().getCurrentTestCase().ifPresent(uuid -> {
+            io.qameta.allure.Allure.getLifecycle().updateTestCase(uuid, testResult -> {
+                testResult.setName(testResult.getName() + " [API]");
+                testResult.setHistoryId(testResult.getHistoryId() + "-API");
+                
+                io.qameta.allure.model.Parameter param = new io.qameta.allure.model.Parameter().setName("Type").setValue("API Test");
+                testResult.getParameters().add(param);
+            });
+        });
     }
 }
