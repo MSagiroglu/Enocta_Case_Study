@@ -59,7 +59,20 @@ public class UI_StepDefs {
                 found = true;
                 break;
             } catch (Exception e) {
-                LoggerUtils.warning("Arama kutusu bulunamadi (Captcha veya bot korumasi olabilir). Sayfa yenileniyor... Deneme: " + (i + 1));
+                LoggerUtils.warning("Arama kutusu bulunamadi. Bot veya uyari sayfasi kontrol ediliyor... Deneme: " + (i + 1));
+                
+                try {
+                    // Amazon'un basit bot dogrulama butonu ciktiysa tikla
+                    java.util.List<org.openqa.selenium.WebElement> continueBtns = Driver.getDriver().findElements(By.xpath("//button[contains(text(), 'Alışverişe Devam Et') or contains(@alt, 'Alışverişe Devam Et')]"));
+                    if (!continueBtns.isEmpty() && continueBtns.get(0).isDisplayed()) {
+                        LoggerUtils.info("'Alisverise Devam Et' butonu bulundu, bot ekrani geciliyor...");
+                        continueBtns.get(0).click();
+                        try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
+                        continue; // Butona tikladik, arama kutusunu bulmak icin loop'un basina don
+                    }
+                } catch (Exception ignored) {}
+
+                LoggerUtils.warning("Sayfa yenileniyor...");
                 Driver.getDriver().navigate().refresh();
                 new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(5)).until(webDriver -> ((org.openqa.selenium.JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
                 if (i == maxRetries - 1) {
