@@ -1,33 +1,12 @@
 version: '3.8'
 
 services:
-  mock-server:
-    build: ./mock-server
-    ports:
-      - "3000:3000"
-      
-  selenium-hub:
-    image: selenium/hub:4.16.1
-    ports:
-      - "4442-4444:4442-4444"
-
-  chrome:
-    image: selenium/node-chrome:4.16.1
-    shm_size: 2gb
-    depends_on:
-      - selenium-hub
-    environment:
-      - SE_EVENT_BUS_HOST=selenium-hub
-      - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-
-  test-runner:
+  automation-tests:
     build: .
-    depends_on:
-      - mock-server
-      - chrome
+    container_name: enocta-tests
     environment:
-      - BROWSER=remote-chrome
-      - MOCK_SERVER_URL=http://mock-server:3000
-      - HUB_URL=http://selenium-hub:4444/wd/hub
-    command: mvn clean verify
+      - BROWSER=${BROWSER:-chrome}
+      - TAGS=${TAGS:-}
+      - CI=true
+    volumes:
+      - ./target:/app/target

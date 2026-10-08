@@ -22,7 +22,6 @@ public class Hooks {
         scenario.log("TESTING ON BROWSER: " + browser);
         utils.LoggerUtils.info("UI Testleri basliyor: " + browser + " tarayicisi baslatiliyor...");
         Driver.getDriver().manage().window().maximize();
-        Driver.getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
 
     @After("@ui")
@@ -32,6 +31,14 @@ public class Hooks {
             utils.LoggerUtils.error(browser + " tarayicisinda test HATA aldi! Ekran goruntusu aliniyor...");
             final byte[] screenshot = ((TakesScreenshot) Driver.getDriver()).getScreenshotAs(OutputType.BYTES);
             scenario.attach(screenshot, "image/png", scenario.getName());
+        } else if (scenario.getStatus() == io.cucumber.java.Status.SKIPPED) {
+            utils.LoggerUtils.warning(browser + " tarayicisinda test ATLANDI (Skipped). Ekran goruntusu ve HTML kaynagi aliniyor...");
+            try {
+                final byte[] screenshot = ((TakesScreenshot) Driver.getDriver()).getScreenshotAs(OutputType.BYTES);
+                scenario.attach(screenshot, "image/png", scenario.getName() + "_skipped");
+                String pageSource = Driver.getDriver().getPageSource();
+                scenario.attach(pageSource.getBytes(java.nio.charset.StandardCharsets.UTF_8), "text/html", "PageSource");
+            } catch (Exception ignored) {}
         } else {
             utils.LoggerUtils.success(browser + " tarayicisinda test BASARIYLA sonuclandi.");
         }

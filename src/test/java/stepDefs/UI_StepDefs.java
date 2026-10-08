@@ -61,10 +61,22 @@ public class UI_StepDefs {
             } catch (Exception e) {
                 LoggerUtils.warning("Arama kutusu bulunamadi (Captcha veya bot korumasi olabilir). Sayfa yenileniyor... Deneme: " + (i + 1));
                 Driver.getDriver().navigate().refresh();
-                try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
+                new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(5)).until(webDriver -> ((org.openqa.selenium.JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
                 if (i == maxRetries - 1) {
-                    LoggerUtils.error("Maksimum deneme sayisina ulasildi. Amazon bot korumasi (Captcha) aşılamadı.");
-                    throw new org.testng.SkipException("Amazon bot korumasi / Captcha aşılamadı. Çevresel kısıtlamalar nedeniyle test atlanıyor (Skipped).", e);
+                    String pageSource = Driver.getDriver().getPageSource().toLowerCase();
+                    String currentUrl = Driver.getDriver().getCurrentUrl().toLowerCase();
+                    
+                    boolean isBotProtection = pageSource.contains("captcha") || 
+                                              pageSource.contains("robot") || 
+                                              pageSource.contains("enter the characters") ||
+                                              currentUrl.contains("captcha");
+                    
+                    if (isBotProtection) {
+                        LoggerUtils.error("Maksimum deneme sayisina ulasildi. Amazon bot korumasi (Captcha/Robot) tespit edildi.");
+                        throw new org.testng.SkipException("Amazon bot korumasi / Captcha tespit edildi. Çevresel kısıtlamalar nedeniyle test atlanıyor (Skipped).", e);
+                    } else {
+                        throw e; // Gercek bir timeout/hata olabilir
+                    }
                 }
             }
         }
@@ -204,16 +216,19 @@ public class UI_StepDefs {
                         try {
                             String ratingText = "";
                             try {
-                                ratingText = seller.findElement(By.cssSelector(".aod-price .a-offscreen, #aod-offer-seller-rating")).getText();
+                                // Sadece satici puanini oku, fiyati degil!
+                                ratingText = seller.findElement(By.cssSelector("#aod-offer-seller-rating, i[class*='a-icon-star'] .a-icon-alt")).getAttribute("innerText");
                             } catch (Exception e) {
-                                // Ignore if rating is missing
+                                continue; // Puan yoksa bu saticiyi atla
                             }
 
-                            double rating = extractRating(ratingText);
-
-                            if (rating < lowestRating) {
-                                lowestRating = rating;
-                                lowestRatedSeller = seller;
+                            if (ratingText != null && !ratingText.trim().isEmpty()) {
+                                double rating = extractRating(ratingText);
+                                // Gecerli bir puan donduyse karsilastir (999.0 hatali demek)
+                                if (rating < 999.0 && rating < lowestRating) {
+                                    lowestRating = rating;
+                                    lowestRatedSeller = seller;
+                                }
                             }
                         } catch (Exception ignored) {}
                     }

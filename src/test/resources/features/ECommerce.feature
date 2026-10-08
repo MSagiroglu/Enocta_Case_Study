@@ -1,6 +1,7 @@
 @all @ui
 Feature: E-Ticaret Urun Satin Alma
   
+  @amazon-live
   Scenario: Arama Yapma ve En Dusuk Puanli Saticidan Sepete Ekleme
     Given kullanici amazon anasayfasina gider
     When kullanici giris islemini yapar

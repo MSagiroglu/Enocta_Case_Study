@@ -17,11 +17,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  test:
+  api-tests:
     runs-on: ubuntu-latest
-    outputs:
-      has_report: ${{ steps.check_report.outputs.has_report }}
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -38,9 +35,37 @@ jobs:
       with:
         node-version: '18'
 
-    # Mock server'i MockServerManager otomatik baslatir, sadece bagimliliklar kurulur
     - name: Install Mock Server dependencies
       run: npm install --prefix mock-server
+
+    - name: Run API Tests
+      run: mvn clean verify -Dcucumber.filter.tags="@api"
+
+    - name: Upload API Test Logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-test-logs
+        path: target/logs/
+
+  ui-live-tests:
+    # Sadece elle tetiklendiginde (workflow_dispatch) veya zamanlanmis gorevde (schedule) calisir
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    outputs:
+      has_report: ${{ steps.check_report.outputs.has_report }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
 
     - name: Install Microsoft Edge
       run: |
@@ -49,10 +74,8 @@ jobs:
         echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main" | sudo tee /etc/apt/sources.list.d/microsoft-edge-dev.list
         sudo apt-get update && sudo apt-get install -y microsoft-edge-stable
 
-    # ubuntu-latest uzerinde Chrome, Firefox kurulu gelir, Edge yukarida kuruldu.
-    # GitHub Actions CI=true set eder -> Driver.java tarayicilari headless acar.
-    - name: Run Tests (API + Chrome/Firefox/Edge paralel)
-      run: mvn clean verify
+    - name: Run UI Tests
+      run: mvn clean verify -Dcucumber.filter.tags="@ui and @amazon-live"
 
     - name: Generate Allure Report
       if: always()
@@ -82,11 +105,11 @@ jobs:
         name: allure-report
         path: target/site/allure-maven-plugin/
 
-    - name: Upload Test Logs
+    - name: Upload UI Test Logs
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: test-logs
+        name: ui-test-logs
         path: target/logs/
 
     - name: Prepare GitHub Pages
@@ -96,8 +119,8 @@ jobs:
         path: target/site/allure-maven-plugin/
 
   deploy-report:
-    needs: test
-    if: always() && needs.test.outputs.has_report == 'true'
+    needs: ui-live-tests
+    if: always() && needs.ui-live-tests.outputs.has_report == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
