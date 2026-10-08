@@ -48,7 +48,16 @@ jobs:
         name: api-test-logs
         path: target/logs/
 
+    - name: Upload API Allure Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-allure-results
+        path: target/allure-results/
+        include-hidden-files: true
+
   ui-live-tests:
+    needs: api-tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     continue-on-error: true
@@ -94,6 +103,14 @@ jobs:
         if [ "$SKIPPED" != "0" ] && [ "$SKIPPED" != "bilinmiyor" ]; then
           echo "::warning::UI testleri Amazon bot korumasi nedeniyle atlandi ($SKIPPED senaryo)"
         fi
+
+    - name: Download API Allure Results
+      if: always()
+      uses: actions/download-artifact@v4
+      continue-on-error: true
+      with:
+        name: api-allure-results
+        path: target/allure-results/
 
     - name: Generate Allure Report
       if: always()
