@@ -10,6 +10,8 @@ import java.time.Duration;
 import org.openqa.selenium.edge.EdgeDriver;
 import java.util.Locale;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Driver {
     private static ThreadLocal<WebDriver> driverPool = new ThreadLocal<>();
@@ -45,7 +47,9 @@ public class Driver {
                     firefoxOptions.addArguments("-private");
                     if (isCI()) {
                         firefoxOptions.addArguments("-headless", "--width=1920", "--height=1080");
-                        firefoxOptions.addPreference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36");
+                        firefoxOptions.addPreference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+                        firefoxOptions.addPreference("dom.webdriver.enabled", false);
+                        firefoxOptions.addPreference("useAutomationExtension", false);
                     }
                     driverPool.set(new FirefoxDriver(firefoxOptions));
                     break;
@@ -59,9 +63,11 @@ public class Driver {
                     edgeOptions.addArguments("-inprivate");
                     if (isCI()) {
                         edgeOptions.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--window-size=1920,1080");
-                        edgeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36");
+                        edgeOptions.addArguments("--disable-gpu");
+                        edgeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
                     }
                     edgeOptions.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
+                    edgeOptions.setExperimentalOption("useAutomationExtension", false);
                     driverPool.set(new EdgeDriver(edgeOptions));
                     break;
                 case "chrome":
@@ -72,9 +78,11 @@ public class Driver {
                     chromeOptions.addArguments("--incognito");
                     if (isCI()) {
                         chromeOptions.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--window-size=1920,1080");
-                        chromeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36");
+                        chromeOptions.addArguments("--disable-gpu");
+                        chromeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
                     }
                     chromeOptions.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
+                    chromeOptions.setExperimentalOption("useAutomationExtension", false);
                     driverPool.set(new ChromeDriver(chromeOptions));
                     break;
             }
