@@ -20,6 +20,10 @@ public class Hooks {
         
         String browser = Driver.getBrowserName() != null ? Driver.getBrowserName().toUpperCase(Locale.ENGLISH) : "CHROME";
         scenario.log("TESTING ON BROWSER: " + browser);
+        
+        // Allure raporunda testleri tarayiciya gore ayirmak (farkli parametrelerle kosulmus gibi gostermek) icin
+        io.qameta.allure.Allure.parameter("Browser", browser);
+        
         utils.LoggerUtils.info("UI Testleri basliyor: " + browser + " tarayicisi baslatiliyor...");
         Driver.getDriver().manage().window().maximize();
     }
@@ -48,6 +52,7 @@ public class Hooks {
     
     @Before("@api")
     public void setUpApi(Scenario scenario) {
+        io.qameta.allure.Allure.parameter("Type", "API Test");
         utils.LoggerUtils.info("API Testleri basliyor: " + scenario.getName());
     }
     
