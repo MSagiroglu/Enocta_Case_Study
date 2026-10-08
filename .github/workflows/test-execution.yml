@@ -19,6 +19,8 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    outputs:
+      has_report: ${{ steps.check_report.outputs.has_report }}
 
     steps:
     - name: Checkout code
@@ -56,6 +58,16 @@ jobs:
       if: always()
       run: mvn allure:report
 
+    - name: Check Allure Report
+      id: check_report
+      if: always()
+      run: |
+        if [ -d "target/site/allure-maven-plugin" ]; then
+          echo "has_report=true" >> $GITHUB_OUTPUT
+        else
+          echo "has_report=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Upload Cucumber (Masterthought) Reports
       if: always()
       uses: actions/upload-artifact@v4
@@ -64,7 +76,7 @@ jobs:
         path: target/cucumber-report-*/
 
     - name: Upload Allure Report
-      if: always()
+      if: always() && steps.check_report.outputs.has_report == 'true'
       uses: actions/upload-artifact@v4
       with:
         name: allure-report
@@ -78,14 +90,14 @@ jobs:
         path: target/logs/
 
     - name: Prepare GitHub Pages
-      if: always() && hashFiles('target/site/allure-maven-plugin/**') != ''
+      if: always() && steps.check_report.outputs.has_report == 'true'
       uses: actions/upload-pages-artifact@v3
       with:
         path: target/site/allure-maven-plugin/
 
   deploy-report:
     needs: test
-    if: always()
+    if: always() && needs.test.outputs.has_report == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -93,7 +105,6 @@ jobs:
     steps:
       - name: Deploy Allure Report to GitHub Pages
         id: deployment
-        if: hashFiles('target/site/allure-maven-plugin/**') != ''
         uses: actions/deploy-pages@v4
 
       - name: Print Allure Report URL

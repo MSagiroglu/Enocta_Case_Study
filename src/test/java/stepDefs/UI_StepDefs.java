@@ -63,7 +63,8 @@ public class UI_StepDefs {
                 Driver.getDriver().navigate().refresh();
                 try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
                 if (i == maxRetries - 1) {
-                    throw e;
+                    LoggerUtils.error("Maksimum deneme sayisina ulasildi. Amazon bot korumasi (Captcha) aşılamadı.");
+                    throw new org.testng.SkipException("Amazon bot korumasi / Captcha aşılamadı. Çevresel kısıtlamalar nedeniyle test atlanıyor (Skipped).", e);
                 }
             }
         }
