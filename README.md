@@ -49,8 +49,4 @@ mvn allure:serve
 ```
 *Not: GitHub Actions üzerinde çalıştırılan testlerin Allure raporları otomatik olarak GitHub Pages'e deploy edilmektedir.*
 
-## ⚠️ Bilinen Kısıtlar ve Bot Koruması
-Bu projede e-ticaret UI senaryosu doğrudan canlı **amazon.com.tr** üzerinde koşulmaktadır. 
-- Amazon'un gelişmiş bot koruması (Captcha vb.) bulut IP'lerinden gelen (GitHub Actions vb.) otomasyon isteklerini engelleyebilmektedir. 
-- Bu sebeple, **GitHub Actions pipeline'ında UI testleri non-blocking (continue-on-error: true)** olarak ayarlanmıştır.
-- Test eğer bot korumasına takılırsa `Failed` yerine profesyonel bir şekilde **`Skipped`** durumuna alınır, hata anındaki ekran görüntüsü rapora eklenir. Lokal çalışmalarda testler başarıyla (Passed) sonuçlanmaktadır.
+
