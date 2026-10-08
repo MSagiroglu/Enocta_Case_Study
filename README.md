@@ -33,8 +33,8 @@ mvn clean verify -Dbrowser=firefox
 
 Sadece API testlerini veya sadece UI testlerini çalıştırmak için:
 ```bash
-mvn clean verify -Dtest=ApiRunner
-mvn clean verify -Dtest=ChromeRunner,FirefoxRunner,EdgeRunner
+mvn clean verify -Dsurefire.suiteXmlFiles=src/test/resources/runners/testng-api.xml
+mvn clean verify -Dsurefire.suiteXmlFiles=src/test/resources/runners/testng-ui.xml
 ```
 
 ### 🐳 Docker ile Çalıştırma

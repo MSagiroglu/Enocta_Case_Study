@@ -1,0 +1,19 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="UI Test Suite" parallel="tests" thread-count="3">
+    <test name="UI Tests - Chrome">
+        <classes>
+            <class name="runners.ChromeRunner"/>
+        </classes>
+    </test>
+    <test name="UI Tests - Firefox">
+        <classes>
+            <class name="runners.FirefoxRunner"/>
+        </classes>
+    </test>
+    
+    <test name="UI Tests - Edge">
+        <classes>
+            <class name="runners.EdgeRunner"/>
+        </classes>
+    </test>
+</suite>

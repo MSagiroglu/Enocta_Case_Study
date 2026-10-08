@@ -39,7 +39,7 @@ jobs:
       run: npm install --prefix mock-server
 
     - name: Run API Tests
-      run: mvn clean verify -Dtest=ApiRunner
+      run: mvn clean verify -Dsurefire.suiteXmlFiles=src/test/resources/runners/testng-api.xml
 
     - name: Upload API Test Logs
       if: always()
@@ -78,7 +78,7 @@ jobs:
       continue-on-error: true
       env:
         CUCUMBER_FILTER_TAGS: "@ui and @amazon-live"
-      run: mvn clean verify -Dtest=ChromeRunner,FirefoxRunner,EdgeRunner
+      run: mvn clean verify -Dsurefire.suiteXmlFiles=src/test/resources/runners/testng-ui.xml
 
     - name: UI Test Summary
       if: always()
