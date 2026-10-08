@@ -16,7 +16,6 @@
         <selenium.version>4.33.0</selenium.version>
         <restassured.version>5.4.0</restassured.version>
         <testng.version>7.8.0</testng.version>
-        <cucumber.filter.tags></cucumber.filter.tags>
     </properties>
 
     <dependencies>
@@ -69,7 +68,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.3</version>
                 <configuration>
-                    <argLine>-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -Dallure.results.directory="target/allure-results" -Dcucumber.filter.tags="${cucumber.filter.tags}"</argLine>
+                    <argLine>-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -Dallure.results.directory="target/allure-results"</argLine>
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/runners/testng.xml</suiteXmlFile>
                     </suiteXmlFiles>

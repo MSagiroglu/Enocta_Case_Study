@@ -33,8 +33,8 @@ mvn clean verify -Dbrowser=firefox
 
 Sadece API testlerini veya sadece UI testlerini çalıştırmak için:
 ```bash
-mvn clean verify -Dcucumber.filter.tags="@api"
-mvn clean verify -Dcucumber.filter.tags="@ui"
+mvn clean verify -Dtest=ApiRunner
+mvn clean verify -Dtest=ChromeRunner,FirefoxRunner,EdgeRunner
 ```
 
 ### 🐳 Docker ile Çalıştırma

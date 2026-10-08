@@ -23,6 +23,10 @@ public class Hooks {
         
         // Allure raporunda testleri tarayiciya gore ayirmak (farkli parametrelerle kosulmus gibi gostermek) icin
         io.qameta.allure.Allure.parameter("Browser", browser);
+        io.qameta.allure.Allure.getLifecycle().updateTestCase(testResult -> {
+            testResult.setName(testResult.getName() + " [" + browser + "]");
+            testResult.setHistoryId(testResult.getHistoryId() + browser);
+        });
         
         utils.LoggerUtils.info("UI Testleri basliyor: " + browser + " tarayicisi baslatiliyor...");
         Driver.getDriver().manage().window().maximize();
@@ -53,6 +57,10 @@ public class Hooks {
     @Before("@api")
     public void setUpApi(Scenario scenario) {
         io.qameta.allure.Allure.parameter("Type", "API Test");
+        io.qameta.allure.Allure.getLifecycle().updateTestCase(testResult -> {
+            testResult.setName(testResult.getName() + " [API]");
+            testResult.setHistoryId(testResult.getHistoryId() + "API");
+        });
         utils.LoggerUtils.info("API Testleri basliyor: " + scenario.getName());
     }
     

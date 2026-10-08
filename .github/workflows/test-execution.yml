@@ -39,7 +39,7 @@ jobs:
       run: npm install --prefix mock-server
 
     - name: Run API Tests
-      run: mvn clean verify -Dcucumber.filter.tags="@api"
+      run: mvn clean verify -Dtest=ApiRunner
 
     - name: Upload API Test Logs
       if: always()
@@ -76,7 +76,9 @@ jobs:
     - name: Run UI Tests
       id: ui_run
       continue-on-error: true
-      run: mvn clean verify -Dcucumber.filter.tags="@ui and @amazon-live"
+      env:
+        CUCUMBER_FILTER_TAGS: "@ui and @amazon-live"
+      run: mvn clean verify -Dtest=ChromeRunner,FirefoxRunner,EdgeRunner
 
     - name: UI Test Summary
       if: always()
