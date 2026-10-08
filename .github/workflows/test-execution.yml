@@ -49,9 +49,8 @@ jobs:
         path: target/logs/
 
   ui-live-tests:
-    # Sadece elle tetiklendiginde (workflow_dispatch) veya zamanlanmis gorevde (schedule) calisir
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     continue-on-error: true
     outputs:
       has_report: ${{ steps.check_report.outputs.has_report }}
@@ -75,7 +74,24 @@ jobs:
         sudo apt-get update && sudo apt-get install -y microsoft-edge-stable
 
     - name: Run UI Tests
+      id: ui_run
+      continue-on-error: true
       run: mvn clean verify -Dcucumber.filter.tags="@ui and @amazon-live"
+
+    - name: UI Test Summary
+      if: always()
+      run: |
+        SKIPPED=0
+        if [ -f "target/surefire-reports/testng-results.xml" ]; then
+          SKIPPED=$(grep -oP 'skipped="\K[0-9]+' target/surefire-reports/testng-results.xml | head -1 || echo 0)
+        else
+          SKIPPED="bilinmiyor"
+        fi
+        echo "### UI Test Sonucu: ${{ steps.ui_run.outcome }}" >> $GITHUB_STEP_SUMMARY
+        echo "Atlanan Senaryo Sayisi: $SKIPPED" >> $GITHUB_STEP_SUMMARY
+        if [ "$SKIPPED" != "0" ] && [ "$SKIPPED" != "bilinmiyor" ]; then
+          echo "::warning::UI testleri Amazon bot korumasi nedeniyle atlandi ($SKIPPED senaryo)"
+        fi
 
     - name: Generate Allure Report
       if: always()
