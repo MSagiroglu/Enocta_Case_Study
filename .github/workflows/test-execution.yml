@@ -78,7 +78,7 @@ jobs:
         path: target/logs/
 
     - name: Prepare GitHub Pages
-      if: always()
+      if: always() && hashFiles('target/site/allure-maven-plugin/**') != ''
       uses: actions/upload-pages-artifact@v3
       with:
         path: target/site/allure-maven-plugin/
@@ -93,4 +93,5 @@ jobs:
     steps:
       - name: Deploy Allure Report to GitHub Pages
         id: deployment
+        if: hashFiles('target/site/allure-maven-plugin/**') != ''
         uses: actions/deploy-pages@v4
