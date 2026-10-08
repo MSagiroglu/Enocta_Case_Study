@@ -21,4 +21,13 @@ public class ProductPage extends BasePage {
 
     @FindBy(css = "input#add-to-cart-button, input[name='submit.addToCart'], span#submit\\.add-to-cart-announce, #buybox-see-all-buying-choices")
     public WebElement defaultAddToCartButton;
+
+    // Helper methods for dynamic/relative locators
+    public String getSellerRatingText(WebElement seller) {
+        return seller.findElement(org.openqa.selenium.By.cssSelector("#aod-offer-seller-rating, i[class*='a-icon-star'] .a-icon-alt")).getAttribute("innerText");
+    }
+
+    public WebElement getSellerAddButton(WebElement seller) {
+        return seller.findElement(org.openqa.selenium.By.cssSelector("input[name='submit.addToCart'], .aod-add-to-cart-button"));
+    }
 }

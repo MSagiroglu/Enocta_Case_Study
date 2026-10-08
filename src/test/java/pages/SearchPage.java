@@ -22,4 +22,12 @@ public class SearchPage extends BasePage {
     
     @FindBy(className = "a-dropdown-prompt")
     public WebElement sortDropdown;
+
+    @FindBy(css = "div.s-main-slot")
+    public WebElement mainSlot;
+
+    // Helper method to keep By locators inside Page class and avoid strict FindBy limitations for relative locators
+    public String getProductUrl(WebElement product) {
+        return product.findElement(org.openqa.selenium.By.xpath(".//a[contains(@href, '/dp/')]")).getAttribute("href");
+    }
 }

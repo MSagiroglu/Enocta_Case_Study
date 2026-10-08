@@ -55,7 +55,8 @@ public class UI_StepDefs {
         int maxRetries = 3;
         for (int i = 0; i < maxRetries; i++) {
             try {
-                ReusableMethods.waitForElementAndSendKeys(Driver.getDriver(), By.id("twotabsearchtextbox"), item, "Arama Kutusu");
+                ReusableMethods.waitForVisibility(homePage.searchBox, "Arama Kutusu");
+                homePage.searchBox.sendKeys(item);
                 found = true;
                 break;
             } catch (Exception e) {
@@ -63,7 +64,7 @@ public class UI_StepDefs {
                 
                 try {
                     // Amazon'un basit bot dogrulama butonu ciktiysa tikla
-                    java.util.List<org.openqa.selenium.WebElement> continueBtns = Driver.getDriver().findElements(By.xpath("//button[contains(text(), 'Alışverişe Devam Et') or contains(@alt, 'Alışverişe Devam Et')]"));
+                    List<WebElement> continueBtns = homePage.continueShoppingBtns;
                     if (!continueBtns.isEmpty() && continueBtns.get(0).isDisplayed()) {
                         LoggerUtils.info("'Alisverise Devam Et' butonu bulundu, bot ekrani geciliyor...");
                         continueBtns.get(0).click();
@@ -95,9 +96,10 @@ public class UI_StepDefs {
         }
 
         try {
-            ReusableMethods.waitForAndClick(Driver.getDriver(), By.id("nav-search-submit-button"), "Arama Butonu", 10);
+            ReusableMethods.waitForVisibility(homePage.searchButton, "Arama Butonu");
+            homePage.searchButton.click();
         } catch (Exception e) {
-            Driver.getDriver().findElement(By.id("twotabsearchtextbox")).sendKeys(Keys.ENTER);
+            homePage.searchBox.sendKeys(Keys.ENTER);
         }
     }
 
@@ -117,7 +119,7 @@ public class UI_StepDefs {
         }
         
         // Hard wait yerine sayfanin (yeni sonuclarin) yuklenmesini dinamik bekle
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.s-main-slot")));
+        wait.until(ExpectedConditions.visibilityOf(searchPage.mainSlot));
         wait.until(ExpectedConditions.or(
             ExpectedConditions.urlContains("low-price"),
             ExpectedConditions.urlContains("p_36")
@@ -184,14 +186,13 @@ public class UI_StepDefs {
                 int randomIndex = ThreadLocalRandom.current().nextInt(lastProducts.size());
                 WebElement selectedProduct = lastProducts.get(randomIndex);
 
-                WebElement productLink = selectedProduct.findElement(By.xpath(".//a[contains(@href, '/dp/')]"));
-                String url = productLink.getAttribute("href");
+                String url = searchPage.getProductUrl(selectedProduct);
 
                 LoggerUtils.info("Secilen urun: " + url);
                 Driver.getDriver().get(url);
                 // Hard wait yerine urun basliginin yuklenmesini bekle
                 WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
-                wait.until(ExpectedConditions.presenceOfElementLocated(By.id("productTitle")));
+                wait.until(ExpectedConditions.visibilityOf(productPage.productTitle));
             } else {
                 Assert.fail("No products found on the search page.");
             }
@@ -217,7 +218,7 @@ public class UI_StepDefs {
             if (hasOtherSellers) {
                 ReusableMethods.clickWithJS(productPage.otherSellersLink, "Diger Saticilar Linki");
                 // Hard wait yerine saticilar listesinin DOM'a inmesini bekle
-                wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("#aod-offer-list, #aod-offer")));
+                wait.until(ExpectedConditions.visibilityOf(productPage.otherSellersPanel));
 
                 List<WebElement> sellers = productPage.otherSellersList;
 
@@ -230,7 +231,7 @@ public class UI_StepDefs {
                             String ratingText = "";
                             try {
                                 // Sadece satici puanini oku, fiyati degil!
-                                ratingText = seller.findElement(By.cssSelector("#aod-offer-seller-rating, i[class*='a-icon-star'] .a-icon-alt")).getAttribute("innerText");
+                                ratingText = productPage.getSellerRatingText(seller);
                             } catch (Exception e) {
                                 continue; // Puan yoksa bu saticiyi atla
                             }
@@ -247,7 +248,7 @@ public class UI_StepDefs {
                     }
 
                     if (lowestRatedSeller != null) {
-                        WebElement addBtn = lowestRatedSeller.findElement(By.cssSelector("input[name='submit.addToCart'], .aod-add-to-cart-button"));
+                        WebElement addBtn = productPage.getSellerAddButton(lowestRatedSeller);
                         ReusableMethods.clickWithJS(addBtn, "En Dusuk Puanli Satici Sepete Ekle");
                         LoggerUtils.info("En dusuk puanli satici (rating: " + lowestRating + ") secildi ve sepete eklendi.");
                         return;
@@ -291,12 +292,12 @@ public class UI_StepDefs {
             // Hard wait yerine sepet sayacinin degismesini veya sepete eklendi mesajini bekle
             WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(10));
             try {
-                wait.until(ExpectedConditions.not(ExpectedConditions.textToBe(By.id("nav-cart-count"), "0")));
+                wait.until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(homePage.cartCount, "0")));
             } catch (Exception e) {
                 // Ignore if it doesn't change immediately, proceed to cart anyway
             }
             Driver.getDriver().get("https://www.amazon.com.tr/cart");
-            ReusableMethods.waitForVisibility(Driver.getDriver().findElement(By.cssSelector(".sc-list-item")), "Sepet Listesi");
+            wait.until(ExpectedConditions.visibilityOfAllElements(cartPage.cartItems));
             List<WebElement> items = cartPage.cartItems;
             Assert.assertTrue(items.size() > 0, "Cart is empty on Amazon!");
         } catch (Exception e) {
